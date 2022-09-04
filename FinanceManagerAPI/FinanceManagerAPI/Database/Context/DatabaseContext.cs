@@ -20,9 +20,9 @@ namespace FinanceManagerAPI.Database.Context
 
 #if DEBUG
             //Test transaction data
-            modelBuilder.Entity<Transactions>().HasData(new Transactions { Id = "abc123", ImgUrl = "https://mondo-logo-cache.appspot.com/twitter/@Morrisons/?size=large','2022-08-31", MerchantName = "Morrisons", PotId = 0, Processed = false, TransactionAmount = 5.44M, TransactionDate = DateTime.Today.AddDays(-2) },
-                new Transactions { Id = "abc1234", ImgUrl = "https://mondo-logo-cache.appspot.com/twitter/@Morrisons/?size=large','2022-08-31", MerchantName = "Greggs", PotId = 0, Processed = false, TransactionAmount = 2.44M, TransactionDate = DateTime.Today.AddDays(-3) },
-                new Transactions { Id = "abc1235", ImgUrl = "https://mondo-logo-cache.appspot.com/twitter/@Morrisons/?size=large','2022-08-31", MerchantName = "Sainsburys", PotId = 0, Processed = false, TransactionAmount = 44.44M, TransactionDate = DateTime.Today.AddDays(-4) });
+            modelBuilder.Entity<Transactions>().HasData(new Transactions { Id = "abc123", ImgUrl = "https://mondo-logo-cache.appspot.com/twitter/@Morrisons/?size=large','2022-08-31", MerchantName = "Morrisons", PotId = 0, Processed = false, TransactionAmount = 5.44M, TransactionDate = DateTime.Today.ToUniversalTime().AddDays(-2).ToUniversalTime() },
+                new Transactions { Id = "abc1234", ImgUrl = "https://mondo-logo-cache.appspot.com/twitter/@Morrisons/?size=large','2022-08-31", MerchantName = "Greggs", PotId = 0, Processed = false, TransactionAmount = 2.44M, TransactionDate = DateTime.Today.ToUniversalTime().AddDays(-3).ToUniversalTime() },
+                new Transactions { Id = "abc1235", ImgUrl = "https://mondo-logo-cache.appspot.com/twitter/@Morrisons/?size=large','2022-08-31", MerchantName = "Sainsburys", PotId = 0, Processed = false, TransactionAmount = 44.44M, TransactionDate = DateTime.Today.ToUniversalTime().AddDays(-4).ToUniversalTime() });
 #endif
         }
 

@@ -8,6 +8,7 @@ import { DoGet, DoPost, useFetchGET, UseFetchGETResult } from "../Helpers/fetchH
 
 type FormData = {
     transactionAmount: number;
+    merchantName: string;
 }
 
 interface AddManualTransactionProps {
@@ -38,7 +39,7 @@ const AddManualTransaction = (props: AddManualTransactionProps) => {
             return;
         }
 
-        DoPost('/api/Transactions/AddManualTransaction', { transactionAmount: data.transactionAmount, potId: selectedPotId }).then(res => {
+        DoPost('/api/Transactions/AddManualTransaction', { transactionAmount: data.transactionAmount, merchantName: data.merchantName ,potId: selectedPotId}).then(res => {
             if(res === true){
                 toast.success('Manual transaction added!', {
                     position: 'bottom-right',
@@ -85,7 +86,7 @@ const AddManualTransaction = (props: AddManualTransactionProps) => {
 
     return ( 
         <>
-            <Modal show={props.showModal} onHide={closeModal} backdrop="static">
+            <Modal show={props.showModal} onHide={closeModal} backdrop="static" contentClassName="manualTransactionModal">
                 <Modal.Header closeButton>
                     <Modal.Title>Add Manual Transaction</Modal.Title>
                 </Modal.Header>
@@ -93,13 +94,16 @@ const AddManualTransaction = (props: AddManualTransactionProps) => {
                     <Container className="ModalBody">
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <Row>
-                                <Col>
-                                    <input className="modalInput" {...register("transactionAmount", {required: true, maxLength: 10, valueAsNumber: true, min: 0.01})} name="transactionAmount" type="number" step="0.01" style={ {maxWidth: '100px'} }/>
-                                </Col>
-                                <Col xs={6}>
-                                    <Select options={selectDropdownData.data} maxMenuHeight={300} styles={customFontColour} className="single-select" onChange={handleDropdownChange}></Select>
+                                <Col xs={2}>
+                                    <input className="modalInput" {...register("transactionAmount", {required: true, maxLength: 10, valueAsNumber: true, min: 0.01})} name="transactionAmount" type="number" step="0.01" placeholder="Amount" style={ {maxWidth: '100px'} } />
                                 </Col>
                                 <Col>
+                                    <input className="modalInput" {...register("merchantName", {required: true})} name="merchantName" placeholder="Merchant Name" style={{maxWidth: '200px'}} ></input>
+                                </Col>
+                                <Col>
+                                    <Select options={selectDropdownData.data} maxMenuHeight={300} styles={customFontColour} className="single-select" onChange={handleDropdownChange} ></Select>
+                                </Col>
+                                <Col xs={1}>
                                     <input type='submit' className="modalInput" style={ { backgroundColor: '#39e327'} }/>
                                 </Col>
                             </Row>

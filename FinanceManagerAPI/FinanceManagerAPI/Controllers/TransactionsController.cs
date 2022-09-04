@@ -81,7 +81,7 @@ namespace FinanceManagerAPI.Controllers
                     Id = DateTime.Now.ToUniversalTime().ToString(),
                     ImgUrl = "n/a",
                     TransactionAmount = dto.TransactionAmount,
-                    MerchantName = "n/a",
+                    MerchantName = dto.MerchantName,
                     PotId = dto.PotId,
                     Processed = true
                 });

@@ -32,3 +32,8 @@
     align-items: center !important;
     text-align: center;
 }
+
+.manualTransactionModal{
+    width: 40vw !important;
+    right: 20%
+}

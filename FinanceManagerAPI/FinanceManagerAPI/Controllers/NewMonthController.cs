@@ -74,6 +74,12 @@ namespace FinanceManagerAPI.Controllers
                 //Set all the values
                 foreach (var pots in context.Pots)
                 {
+                    //id 1 is default, don't change it
+                    if(pots.PotId == 1)
+                    {
+                        continue;
+                    }
+
                     pots.AmountLeftThisMonth = pots.AmountAllocated;
                     total += pots.AmountAllocated;
                 }
