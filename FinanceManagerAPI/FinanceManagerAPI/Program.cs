@@ -1,5 +1,4 @@
 using FinanceManagerAPI;
-using FinanceManagerAPI.Data.MonzoApi;
 using FinanceManagerAPI.Services;
 using Serilog;
 
@@ -11,7 +10,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "allowUrls",
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:3000", "https://fmdemo.bregan.me");
+                          policy.WithOrigins("http://localhost:3000");
                           policy.WithHeaders("Content-Type");
                           policy.WithMethods("GET", "POST", "DELETE");
                       });
