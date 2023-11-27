@@ -1,33 +1,36 @@
-import { type ReactNode } from 'react'
-import { AppShell, Burger, Group } from '@mantine/core'
-import '@mantine/core/styles.css'
+import { Burger, Container, Drawer, Button, Group } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
+import classes from '../styles/Nav.module.css'
 
-interface MyAppShellProps {
-  children: ReactNode
-}
-
-const Navigation = ({ children }: MyAppShellProps): JSX.Element => {
+const Navigation = (): JSX.Element => {
   const [opened, { toggle }] = useDisclosure()
 
   return (
-    <AppShell
-        header={{ height: 48 }}
-        navbar={{
-          width: 200,
-          breakpoint: 'sm',
-          collapsed: { mobile: !opened }
-        }}>
-        <AppShell.Header>
-            <Group h="100%" px="md">
-                <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-            </Group>
-        </AppShell.Header>
-        <AppShell.Navbar p="md">Navbar</AppShell.Navbar>
-        <AppShell.Main>
-            {children}
-        </AppShell.Main>
-    </AppShell>
+    <>
+      <header className={classes.header}>
+        <Container className={classes.inner} size='100%'>
+          <Group visibleFrom='xs'>
+            <Button>test</Button>
+            <Button>test2</Button>
+          </Group>
+          <Burger
+            className={classes.burger}
+            opened={opened}
+            onClick={toggle}
+            hiddenFrom="xs"
+            size="sm" />
+        </Container>
+      </header>
+
+      <Drawer
+        opened={opened}
+        onClose={toggle}
+        size='100%'
+      >
+
+      </Drawer>
+    </>
+
   )
 }
 

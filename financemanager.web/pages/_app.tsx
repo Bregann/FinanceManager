@@ -7,9 +7,8 @@ export default function App ({ Component, pageProps }: AppProps): JSX.Element {
   return (
 
     <MantineProvider defaultColorScheme="dark">
-      <Navigation>
-        <Component {...pageProps} />
-      </Navigation>
+      <Navigation />
+      <Component {...pageProps} />
     </MantineProvider>
   )
 }
