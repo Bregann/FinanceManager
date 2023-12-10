@@ -20,15 +20,30 @@
 }
 
 .checkBoxButton {
-    margin-top: 20px;
+    margin-top: 24px;
 }
 
-.potTable {
+.automaticTransactionsButton {
+    margin-top: 24px;
+}
+
+.table {
     width: 90%;
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
 }
+
+.actionButton{
+    margin-Right: 10px;
+}
+
+@media (max-width: 1802px){
+    .actionButton {
+        margin-bottom: 10px;
+    }
+}
+
 
 h1, h2 {
     margin-bottom: 20px;
