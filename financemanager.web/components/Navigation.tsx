@@ -20,11 +20,8 @@ const Navigation = (): JSX.Element => {
           <Link href='/this-month'>
             <UnstyledButton className={router.pathname === '/this-month' ? classes.linkActive : classes.link}>This Month</UnstyledButton>
           </Link>
-          <Link href='/pots'>
-            <UnstyledButton className={router.pathname === '/pots' ? classes.linkActive : classes.link}>Pots</UnstyledButton>
-          </Link>
-          <Link href='/automatic-transactions' >
-            <UnstyledButton className={router.pathname === '/automatic-transactions' ? classes.linkActive : classes.link}>Automatic Transactions</UnstyledButton>
+          <Link href='/management' >
+            <UnstyledButton className={router.pathname === '/management' ? classes.linkActive : classes.link}>Management</UnstyledButton>
           </Link>
           <IconCalendarPlus className={classes.addMonthIco}/>
         </Group>
