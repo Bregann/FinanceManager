@@ -7,7 +7,7 @@ export default function Home (): JSX.Element {
     <>
 
       <Container size='lg'>
-        <Grid gutter={0}>
+        <Grid gutter={5}>
           <Grid.Col span="auto">
             <div className={classes.box}>
               <h3 className={classes.header}>Money In</h3>
