@@ -1,5 +1,6 @@
 import { Container, Grid } from '@mantine/core'
 import classes from '../styles/ThisMonth.module.css'
+import TransactionsTable from '@/components/TransactionsTable'
 
 const ThisMonth = (): JSX.Element => {
   return (
@@ -76,6 +77,54 @@ const ThisMonth = (): JSX.Element => {
           </Grid.Col>
         </Grid>
       </Container>
+
+      <h2>Transactions This Month</h2>
+      <Container size='xl'>
+        <TransactionsTable />
+      </Container>
+
+      <h2>Stats Breakdown</h2>
+      <Container size='xl'>
+        <Grid>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <div className={classes.statsBox}>
+              <h4>Spent Per Pot</h4>
+            </div>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <div className={classes.statsBox}>
+              <h4>Top Places Money Spent</h4>
+            </div>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <div className={classes.statsBox}>
+              <h4>Most Expensive Purchases</h4>
+            </div>
+          </Grid.Col>
+        </Grid>
+        <Grid style={{ marginTop: 30 }}>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <div className={classes.statsBox}>
+              <h4>Spent Per Pot</h4>
+            </div>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <div className={classes.statsBox}>
+              <h4>Top Places Money Spent</h4>
+            </div>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <div className={classes.statsBox}>
+              <h4>Most Expensive Purchases</h4>
+            </div>
+          </Grid.Col>
+        </Grid>
+
+        <div className={classes.statsBoxBig}>
+          <h4>Daily Money Spent</h4>
+        </div>
+      </Container>
+      <br />
     </>
   )
 }
