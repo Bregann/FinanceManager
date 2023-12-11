@@ -1,7 +1,6 @@
 ﻿using FinanceManager.Domain.Dtos.ThirdParty;
 using FinanceManagerAPI.Database.Context;
 using FinanceManagerAPI.Database.Models;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators.OAuth2;
@@ -17,20 +16,22 @@ namespace FinanceManagerAPI.Data.MonzoApi
             var client = new RestClient("https://api.monzo.com/");
             var request = new RestRequest($"/oauth2/token", Method.Post);
             request.AddParameter("grant_type", "refresh_token");
-            request.AddParameter("client_id", AppConfig.ClientId);
-            request.AddParameter("client_secret", AppConfig.ClientSecret);
-            request.AddParameter("refresh_token", AppConfig.RefreshToken);
+            request.AddParameter("client_id", AppConfig.MonzoClientId);
+            request.AddParameter("client_secret", AppConfig.MonzoClientSecret);
+            request.AddParameter("refresh_token", AppConfig.MonzoRefreshToken);
 
 
             var response = await client.ExecuteAsync(request);
-            if (response.Content == "")
+
+            if (response.Content == null || response.Content == "")
             {
                 Log.Warning("[Monzo Refresh] Refresh Error");
+                //todo: send error msg
                 return;
             }
 
             var transactionsResult = JsonConvert.DeserializeObject<MonzoRefreshResponse>(response.Content);
-            AppConfig.UpdateAccessAndRefreshToken(transactionsResult.AccessToken, transactionsResult.RefreshToken);
+            await AppConfig.UpdateAccessAndRefreshToken(transactionsResult!.AccessToken, transactionsResult.RefreshToken);
 
             Log.Information("[Monzo Refresh Job] Monzo Refreshed");
         }
@@ -38,14 +39,18 @@ namespace FinanceManagerAPI.Data.MonzoApi
         public static async Task GetTransactionsAndAddToDatabase()
         {
             //Create the request
-            var client = new RestClient("https://api.monzo.com/");
-            var request = new RestRequest($"/transactions?expand[]=merchant&account_id={AppConfig.AccountId}&since={DateTime.Now.AddDays(-7).ToString("yyyy-MM-ddTh:mm:ssZ")}", Method.Get);
-            client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(AppConfig.AccessToken, "Bearer");
+            var clientOptions = new RestClientOptions("https://api.monzo.com/")
+            {
+                Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(AppConfig.MonzoAccessToken, "Bearer")
+            };
+
+            var client = new RestClient(clientOptions);
+            var request = new RestRequest($"/transactions?expand[]=merchant&account_id={AppConfig.MonzoAccountId}&since={DateTime.Now.AddDays(-7).ToString("yyyy-MM-ddTh:mm:ssZ")}", Method.Get);
 
             //Get the response and Deserialize
             var response = await client.ExecuteAsync(request);
 
-            if (response.Content == "")
+            if (response.Content == null || response.Content == "")
             {
                 Log.Warning("[Monzo Transactions Update] No response found");
                 return;
@@ -53,7 +58,7 @@ namespace FinanceManagerAPI.Data.MonzoApi
 
             var transactionsResult = JsonConvert.DeserializeObject<MonzoDataResponse>(response.Content);
 
-            if (transactionsResult.Transactions == null)
+            if (transactionsResult!.Transactions == null)
             {
                 Log.Information("[Monzo Transactions Update] No transactions found");
                 return;
@@ -62,38 +67,33 @@ namespace FinanceManagerAPI.Data.MonzoApi
             using (var context = new DatabaseContext())
             {
                 //loop through the transactions and insert them to the db
-                var transactionListToDb = new List<Transactions>();
                 foreach (var transaction in transactionsResult.Transactions)
                 {
                     //Check if it already exists, if it does then dont insert
-                    var dbCheck = await context.Transactions.Where(x => x.Id == transaction.Id).FirstOrDefaultAsync();
-
-                    if (dbCheck != null)
+                    if (!context.Transactions.Any(x => x.Id == transaction.Id))
                     {
                         continue;
                     }
-                
+
                     //Convert the amount to a positive
                     var positiveTransactionAmount = Math.Abs(transaction.Amount);
 
-                    if(transaction.Merchant == null)
+                    if (transaction.Merchant == null)
                     {
                         continue;
                     }
 
-                    transactionListToDb.Add(new Transactions
+                    context.Transactions.Add(new Transactions
                     {
                         Id = transaction.Id,
                         TransactionDate = transaction.Created.UtcDateTime,
                         ImgUrl = transaction.Merchant.Logo,
-                        PotId = 0,
                         MerchantName = transaction.Merchant.Name,
                         Processed = false,
                         TransactionAmount = positiveTransactionAmount / 100
                     });
                 }
 
-                context.Transactions.AddRange(transactionListToDb);
                 context.SaveChanges();
             }
 

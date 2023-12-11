@@ -1,28 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FinanceManagerAPI.Database.Models
 {
     public class Config
     {
-        [Key]
-        [Column("configName")]
-        public string ConfigName { get; set; }
-
-        [Column("clientID")]
-        public string ClientId { get; set; }
-
-        [Column("accountID")]
-        public string AccountId { get; set; }
-
-        [Column("clientSecret")]
-        public string ClientSecret { get; set; }
-
-        [Column("refreshToken")]
-        public string RefreshToken { get; set; }
-
-        [Column("accessToken")]
-        public string AccessToken { get; set; }
-
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int ConfigName { get; set; }
+        public required string MonzoClientId { get; set; }
+        public required string MonzoAccountId { get; set; }
+        public required string MonzoClientSecret { get; set; }
+        public required string MonzoRefreshToken { get; set; }
+        public required string MonzoAccessToken { get; set; }
+        public required string HFUsername { get; set; }
+        public required string HFPassword { get; set; }
     }
 }

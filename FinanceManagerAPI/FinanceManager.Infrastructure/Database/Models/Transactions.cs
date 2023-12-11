@@ -6,25 +6,11 @@ namespace FinanceManagerAPI.Database.Models
     public class Transactions
     {
         [Key]
-        [Column("id")]
-        public string Id { get; set; }
-
-        [Column("processed")]
-        public bool Processed { get; set; }
-
-        [Column("imgUrl")]
-        public string ImgUrl { get; set; }
-
-        [Column("transactionDate")]
-        public DateTime TransactionDate { get; set; }
-
-        [Column("merchantName")]
-        public string MerchantName { get; set; }
-
-        [Column("transactionAmount")]
-        public decimal TransactionAmount { get; set; }
-
-        [Column("potId")]
-        public long PotId { get; set; }
+        public required string Id { get; set; }
+        public required bool Processed { get; set; }
+        public string? ImgUrl { get; set; }
+        public required DateTime TransactionDate { get; set; }
+        public required string MerchantName { get; set; }
+        public required decimal TransactionAmount { get; set; }
     }
 }
