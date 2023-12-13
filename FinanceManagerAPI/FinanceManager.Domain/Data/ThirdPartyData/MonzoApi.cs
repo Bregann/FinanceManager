@@ -1,6 +1,7 @@
 ﻿using FinanceManager.Domain.Dtos.ThirdParty;
 using FinanceManagerAPI.Database.Context;
 using FinanceManagerAPI.Database.Models;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators.OAuth2;
@@ -19,7 +20,6 @@ namespace FinanceManagerAPI.Data.MonzoApi
             request.AddParameter("client_id", AppConfig.MonzoClientId);
             request.AddParameter("client_secret", AppConfig.MonzoClientSecret);
             request.AddParameter("refresh_token", AppConfig.MonzoRefreshToken);
-
 
             var response = await client.ExecuteAsync(request);
 
@@ -102,12 +102,16 @@ namespace FinanceManagerAPI.Data.MonzoApi
 
         public static async Task CreateFeedItem(string moneyType, string moneyLeft)
         {
-            var client = new RestClient("https://api.monzo.com/");
+            var clientOptions = new RestClientOptions("https://api.monzo.com/")
+            {
+                Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(AppConfig.MonzoAccessToken, "Bearer")
+            };
+
+            var client = new RestClient(clientOptions);
             var request = new RestRequest($"feed", Method.Post);
-            client.Authenticator = new OAuth2AuthorizationRequestHeaderAuthenticator(AppConfig.AccessToken, "Bearer");
-            request.AddParameter("client_id", AppConfig.ClientId);
+            request.AddParameter("client_id", AppConfig.MonzoClientId);
             request.AddParameter("type", "basic");
-            request.AddParameter("account_id", AppConfig.AccountId);
+            request.AddParameter("account_id", AppConfig.MonzoAccountId);
             request.AddParameter("params[title]", $"{moneyType} Balance Updated. Left - {moneyLeft}");
             request.AddParameter("params[body]", $"Money left - {moneyLeft}");
             request.AddParameter("params[image_url]", "https://i.imgur.com/iHpONMX.png");
@@ -121,6 +125,34 @@ namespace FinanceManagerAPI.Data.MonzoApi
             else
             {
                 Log.Error($"[Monzo Feed] Monzo Feed failed to update - {response.StatusCode} / {response.StatusDescription} / {response.StatusDescription}");
+            }
+        }
+
+        public static async Task UpdateAutomaticTransactions()
+        {
+            using (var context = new DatabaseContext())
+            {
+                var unprocessedTransactions = await context.Transactions.Where(x => x.Processed == false).ToArrayAsync();
+
+                foreach (var transaction in unprocessedTransactions)
+                {
+                    //Check if there is an automatic transaction for it
+                    var automaticTransaction = await context.AutomaticTransactions.FirstOrDefaultAsync(x => x.MerchantName.ToLower() == transaction.MerchantName.ToLower());
+
+                    if (automaticTransaction == null)
+                    {
+                        continue;
+                    }
+
+                    //Update the transaction data
+                    automaticTransaction.Pot.PotAmountLeft -= transaction.TransactionAmount;
+                    transaction.Pot = automaticTransaction.Pot;
+                    transaction.Processed = true;
+
+                    await context.SaveChangesAsync();
+
+                    Log.Information($"[Automatic Transactions] £{transaction.TransactionAmount} transaction for {transaction.MerchantName} successfully updated");
+                }
             }
         }
     }

@@ -1,23 +1,25 @@
-﻿namespace FinanceManager.Domain.Dtos.ThirdParty
+﻿using Newtonsoft.Json;
+
+namespace FinanceManager.Domain.Dtos.ThirdParty
 {
     public class MonzoRefreshResponse
     {
         [JsonProperty("access_token")]
-        public string AccessToken { get; set; }
+        public required string AccessToken { get; set; }
 
         [JsonProperty("client_id")]
-        public string ClientId { get; set; }
+        public required string ClientId { get; set; }
 
         [JsonProperty("expires_in")]
         public int ExpiresIn { get; set; }
 
         [JsonProperty("refresh_token")]
-        public string RefreshToken { get; set; }
+        public required string RefreshToken { get; set; }
 
         [JsonProperty("token_type")]
-        public string TokenType { get; set; }
+        public required string TokenType { get; set; }
 
         [JsonProperty("user_id")]
-        public string UserId { get; set; }
+        public required string UserId { get; set; }
     }
 }

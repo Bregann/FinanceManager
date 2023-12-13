@@ -1,11 +1,25 @@
 import { Container, Grid } from '@mantine/core'
 import classes from '../styles/Home.module.css'
 import TransactionsTable from '@/components/TransactionsTable'
+import { type GetServerSideProps } from 'next/types'
+import backendFetchHelper from '@/helpers/BackendFetchHelper'
+import type DropdownOptions from '@/types/DropdownOptions'
 
-export default function Home (): JSX.Element {
+interface PageProps {
+  homeData: HomeTopStats
+  potDropdownOptions: DropdownOptions
+}
+
+interface HomeTopStats {
+  moneyIn: string
+  moneySpent: string
+  moneyLeft: string
+  totalSavings: string
+}
+
+export default function Home (props: PageProps): JSX.Element {
   return (
     <>
-
       <Container size='lg'>
         <Grid gutter={5}>
           <Grid.Col span="auto">
@@ -39,4 +53,15 @@ export default function Home (): JSX.Element {
       </Container>
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+  const unprocessedTransactionsFetchResponse = await backendFetchHelper.doGet('/api/Transactions/GetUnprocessedTransactionsFromDatabase')
+  const potValuesFetchResponse = await backendFetchHelper.doGet('/api/Pots/GetPotDropdownValues')
+  const homeDataStatsFetchResponse = await backendFetchHelper.doGet('/api/Home/GetHomeData')
+  return {
+    props: {
+
+    }
+  }
 }

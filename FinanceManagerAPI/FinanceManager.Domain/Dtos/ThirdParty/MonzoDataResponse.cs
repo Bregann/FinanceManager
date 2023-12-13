@@ -1,4 +1,6 @@
-﻿namespace FinanceManager.Domain.Dtos.ThirdParty
+﻿using Newtonsoft.Json;
+
+namespace FinanceManager.Domain.Dtos.ThirdParty
 {
     public class MonzoDataResponse
     {

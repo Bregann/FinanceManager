@@ -1,4 +1,5 @@
-﻿using FinanceManagerAPI.Database.Models;
+﻿using FinanceManager.Infrastructure.Database.Models;
+using FinanceManagerAPI.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManagerAPI.Database.Context
@@ -9,6 +10,9 @@ namespace FinanceManagerAPI.Database.Context
 
         public DbSet<Config> Config { get; set; }
         public DbSet<Transactions> Transactions { get; set; }
+        public DbSet<Pots> Pots { get; set; }
+        public DbSet<AutomaticTransactions> AutomaticTransactions { get; set; }
+        public DbSet<HistoricData> HistoricData {  get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
