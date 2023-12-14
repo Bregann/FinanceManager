@@ -70,7 +70,7 @@ namespace FinanceManagerAPI.Data.MonzoApi
                 foreach (var transaction in transactionsResult.Transactions)
                 {
                     //Check if it already exists, if it does then dont insert
-                    if (!context.Transactions.Any(x => x.Id == transaction.Id))
+                    if (await context.Transactions.AnyAsync(x => x.Id == transaction.Id))
                     {
                         continue;
                     }
@@ -83,18 +83,18 @@ namespace FinanceManagerAPI.Data.MonzoApi
                         continue;
                     }
 
-                    context.Transactions.Add(new Transactions
+                    await context.Transactions.AddAsync(new Transactions
                     {
                         Id = transaction.Id,
                         TransactionDate = transaction.Created.UtcDateTime,
                         ImgUrl = transaction.Merchant.Logo,
                         MerchantName = transaction.Merchant.Name,
                         Processed = false,
-                        TransactionAmount = positiveTransactionAmount / 100
+                        TransactionAmount = positiveTransactionAmount
                     });
                 }
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
 
             Log.Information($"[Monzo Transactions Update] Transactions added into the database");

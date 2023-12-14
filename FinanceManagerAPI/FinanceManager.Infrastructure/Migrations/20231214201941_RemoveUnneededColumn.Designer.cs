@@ -3,6 +3,7 @@ using System;
 using FinanceManagerAPI.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceManager.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231214201941_RemoveUnneededColumn")]
+    partial class RemoveUnneededColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,7 +157,7 @@ namespace FinanceManager.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("PotId")
+                    b.Property<int>("PotId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("Processed")
@@ -188,7 +191,9 @@ namespace FinanceManager.Infrastructure.Migrations
                 {
                     b.HasOne("FinanceManager.Infrastructure.Database.Models.Pots", "Pot")
                         .WithMany()
-                        .HasForeignKey("PotId");
+                        .HasForeignKey("PotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Pot");
                 });

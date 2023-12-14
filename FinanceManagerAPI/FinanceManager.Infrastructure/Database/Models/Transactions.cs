@@ -1,5 +1,6 @@
 ﻿using FinanceManager.Infrastructure.Database.Models;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FinanceManagerAPI.Database.Models
 {
@@ -11,8 +12,10 @@ namespace FinanceManagerAPI.Database.Models
         public string? ImgUrl { get; set; }
         public required DateTime TransactionDate { get; set; }
         public required string MerchantName { get; set; }
-        public required decimal TransactionAmount { get; set; }
+        public required long TransactionAmount { get; set; }
 
+        [ForeignKey("Pots")]
+        public int? PotId { get; set; }
         public virtual Pots? Pot { get; set; }
     }
 }

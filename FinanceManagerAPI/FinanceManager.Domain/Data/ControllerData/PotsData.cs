@@ -12,7 +12,7 @@ namespace FinanceManager.Domain.Data.ControllerData
             {
                 return await context.Pots.Where(x => x.Deleted == false).Select(x => new PotsDropdownValuesDto
                 {
-                    Value = x.Id,
+                    Value = x.Id.ToString(),
                     Label = x.PotName
                 }).ToArrayAsync();
             }

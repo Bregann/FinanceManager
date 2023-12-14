@@ -1,4 +1,5 @@
 ﻿using BreganUtils;
+using FinanceManager.Domain.Dtos.Controllers.Transactions.Requests;
 using FinanceManager.Domain.Dtos.Controllers.Transactions.Responses;
 using FinanceManagerAPI.Database.Context;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +18,14 @@ namespace FinanceManager.Domain.Data.ControllerData
                     TransactionAmount = x.TransactionAmount,
                     IconUrl = x.ImgUrl,
                     MerchantName = x.MerchantName,
-                    TransactionDate = DateTimeHelper.HumanizeDateTime(x.TransactionDate),
+                    TransactionDate = DateTimeHelper.HumanizeDateTime(x.TransactionDate)
                 }).ToArrayAsync();
             }
+        }
+
+        public static async Task<bool> UpdateTransaction(UpdateTransactionRequest request)
+        {
+            return true;
         }
     }
 }

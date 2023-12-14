@@ -1,4 +1,5 @@
 ﻿using FinanceManager.Domain.Data.ControllerData;
+using FinanceManager.Domain.Dtos.Controllers.Transactions.Requests;
 using FinanceManager.Domain.Dtos.Controllers.Transactions.Responses;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,12 @@ namespace FinanceManager.WebApi.Controllers
         public async Task<GetUnprocessedTransactionsDto[]> GetUnprocessedTransactionsFromDatabase()
         {
             return await TransactionsData.GetUnprocessedTransactionsFromDatabase();
+        }
+
+        [HttpPost]
+        public async Task<bool> UpdateTransaction([FromBody] UpdateTransactionRequest request)
+        {
+            return await TransactionsData.UpdateTransaction(request);
         }
     }
 }

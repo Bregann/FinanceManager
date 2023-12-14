@@ -1,8 +1,47 @@
-import { Table, Select } from '@mantine/core'
-import { IconTrash } from '@tabler/icons-react'
+import { Table, Select, type ComboboxItem } from '@mantine/core'
+import { IconCircleCheck, IconTrash } from '@tabler/icons-react'
 import classes from '../styles/TransactionsTable.module.css'
+import Image from 'next/image'
+import { useState } from 'react'
+import fetchHelper from '@/helpers/FetchHelper'
+import notificationHelper from '@/helpers/NotificationHelper'
 
-const TransactionsTable = (): JSX.Element => {
+export interface TransactionTableData {
+  id: string
+  merchantName: string
+  iconUrl: string
+  transactionAmount: number
+  transactionDate: string
+  potId?: string
+}
+
+interface TransactionsTableProps {
+  rows: TransactionTableData[]
+  dropdownValues: ComboboxItem[]
+  removeRow: boolean
+}
+
+const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
+  const [tableRows, setTableRows] = useState<TransactionTableData[]>(props.rows)
+
+  const UpdateDropdownChange = async (row: TransactionTableData, potId: number): Promise<void> => {
+    // only want to remove a row on the homepage
+    if (props.removeRow) {
+      const data = {
+        transactionId: row.id,
+        potId
+      }
+
+      const fetchResult = await fetchHelper.doPost('/transactions/UpdateTransaction', data)
+
+      if (fetchResult.data === false || fetchResult.errored) {
+        console.log('error')
+      } else {
+        notificationHelper.showSuccessNotification('Success', 'message', <IconCircleCheck />)
+      }
+    }
+  }
+
   return (
     <>
       <div className={classes.tableBox}>
@@ -18,57 +57,42 @@ const TransactionsTable = (): JSX.Element => {
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            <Table.Tr>
-              <Table.Td>Ico</Table.Td>
-              <Table.Td>Sainsburys</Table.Td>
-              <Table.Td>£500</Table.Td>
-              <Table.Td>Today</Table.Td>
-              <Table.Td>
-                <Select
-                  placeholder='Pick value'
-                  data={['Savings', 'None']}
-                  comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
-                />
-              </Table.Td>
-              <Table.Td>
-                <IconTrash className={classes.binIco} />
-              </Table.Td>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Td>Ico</Table.Td>
-              <Table.Td>Sainsburys</Table.Td>
-              <Table.Td>£500</Table.Td>
-              <Table.Td>Today</Table.Td>
-              <Table.Td>
-                <Select
-                  placeholder='Pick value'
-                  data={['Savings', 'None']}
-                  comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
-                />
-              </Table.Td>
-              <Table.Td>
-                <IconTrash className={classes.binIco} />
-              </Table.Td>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Td>Ico</Table.Td>
-              <Table.Td>Sainsburys</Table.Td>
-              <Table.Td>£500</Table.Td>
-              <Table.Td>Today</Table.Td>
-              <Table.Td>
-                <Select
-                  placeholder='Pick value'
-                  data={['Savings', 'None']}
-                  comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
-                />
-              </Table.Td>
-              <Table.Td>
-                <IconTrash className={classes.binIco} />
-              </Table.Td>
-            </Table.Tr>
-          </Table.Tbody>
-        </Table>
-      </div>
+            {tableRows.map((row) => {
+              return (
+                <>
+                  <Table.Tr key={row.id}>
+                    <Table.Td>
+                      <Image
+                        className={classes.logo}
+                        src={row.iconUrl}
+                        width={48}
+                        height={48}
+                        alt='logo'
+                      />
+                    </Table.Td>
+                    <Table.Td>{row.merchantName}</Table.Td>
+                    <Table.Td>{row.transactionAmount}</Table.Td>
+                    <Table.Td>{row.transactionDate}</Table.Td>
+                    <Table.Td>
+                      <Select
+                        onChange={async (e) => { await UpdateDropdownChange(row, Number(e)) }}
+                        defaultValue={row.potId !== null ? row.potId : undefined}
+                        placeholder='Pick value'
+                        data={props.dropdownValues}
+                        comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
+                      />
+                    </Table.Td>
+                    <Table.Td>
+                      <IconTrash className={classes.binIco} />
+                    </Table.Td>
+                  </Table.Tr>
+                  <Table.Tr></Table.Tr>
+                </>
+              )
+            })}
+        </Table.Tbody>
+      </Table>
+    </div >
     </>
   )
 }

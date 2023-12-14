@@ -1,13 +1,13 @@
-import { Container, Grid } from '@mantine/core'
+import { type ComboboxItem, Container, Grid } from '@mantine/core'
 import classes from '../styles/Home.module.css'
-import TransactionsTable from '@/components/TransactionsTable'
+import TransactionsTable, { type TransactionTableData } from '@/components/TransactionsTable'
 import { type GetServerSideProps } from 'next/types'
 import backendFetchHelper from '@/helpers/BackendFetchHelper'
-import type DropdownOptions from '@/types/DropdownOptions'
 
 interface PageProps {
   homeData: HomeTopStats
-  potDropdownOptions: DropdownOptions
+  potDropdownOptions: ComboboxItem[]
+  transactionData: TransactionTableData[]
 }
 
 interface HomeTopStats {
@@ -25,43 +25,51 @@ export default function Home (props: PageProps): JSX.Element {
           <Grid.Col span="auto">
             <div className={classes.box}>
               <h3 className={classes.header}>Money In</h3>
-              <p className={classes.amount}>£100</p>
+              <p className={classes.amount}>{props.homeData.moneyIn}</p>
             </div>
           </Grid.Col>
           <Grid.Col span="auto">
             <div className={classes.box}>
               <h3 className={classes.header}>Money Spent</h3>
-              <p className={classes.amount}>£100</p>
+              <p className={classes.amount}>{props.homeData.moneySpent}</p>
             </div>
           </Grid.Col>
           <Grid.Col span="auto">
             <div className={classes.box}>
               <h3 className={classes.header}>Money Left</h3>
-              <p className={classes.amount}>£100</p>
+              <p className={classes.amount}>{props.homeData.moneyLeft}</p>
             </div>
           </Grid.Col>
           <Grid.Col span="auto">
             <div className={classes.box}>
               <h3 className={classes.header}>Total in Savings</h3>
-              <p className={classes.amount}>£100</p>
+              <p className={classes.amount}>{props.homeData.totalSavings}</p>
             </div>
           </Grid.Col>
         </Grid>
 
         <h1>Home</h1>
-        <TransactionsTable />
+        <TransactionsTable
+          rows={props.transactionData}
+          dropdownValues={props.potDropdownOptions}
+          removeRow={true} />
       </Container>
     </>
   )
 }
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
-  const unprocessedTransactionsFetchResponse = await backendFetchHelper.doGet('/api/Transactions/GetUnprocessedTransactionsFromDatabase')
-  const potValuesFetchResponse = await backendFetchHelper.doGet('/api/Pots/GetPotDropdownValues')
-  const homeDataStatsFetchResponse = await backendFetchHelper.doGet('/api/Home/GetHomeData')
-  return {
-    props: {
+  const unprocessedTransactionsFetchResponse = await backendFetchHelper.doGet('/Transactions/GetUnprocessedTransactionsFromDatabase')
+  const potValuesFetchResponse = await backendFetchHelper.doGet('/Pots/GetPotDropdownValues')
+  const homeDataStatsFetchResponse = await backendFetchHelper.doGet('/Home/GetHomeData')
 
-    }
+  const pageProps: PageProps = {
+    homeData: homeDataStatsFetchResponse.data,
+    potDropdownOptions: potValuesFetchResponse.data,
+    transactionData: unprocessedTransactionsFetchResponse.data
+  }
+
+  return {
+    props: pageProps
   }
 }

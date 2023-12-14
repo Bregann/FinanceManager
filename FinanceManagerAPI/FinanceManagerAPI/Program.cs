@@ -1,3 +1,4 @@
+using FinanceManager.Domain;
 using FinanceManagerAPI;
 using Hangfire;
 using Hangfire.Dashboard.BasicAuthorization;
@@ -23,6 +24,9 @@ builder.Services.AddCors(options =>
 
 Log.Logger = new LoggerConfiguration().WriteTo.Async(x => x.File("Logs/log.log", retainedFileCountLimit: 7, rollingInterval: RollingInterval.Day)).WriteTo.Console().CreateLogger();
 Log.Information("Logger Setup");
+
+AppConfig.LoadConfig();
+HangfireJobs.SetupHangfireJobs();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
