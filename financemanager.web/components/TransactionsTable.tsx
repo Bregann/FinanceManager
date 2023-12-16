@@ -1,5 +1,5 @@
 import { Table, Select, type ComboboxItem } from '@mantine/core'
-import { IconCircleCheck, IconTrash } from '@tabler/icons-react'
+import { IconCircleCheck, IconCircleX, IconTrash, IconPhotoX } from '@tabler/icons-react'
 import classes from '../styles/TransactionsTable.module.css'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -10,7 +10,7 @@ export interface TransactionTableData {
   id: string
   merchantName: string
   iconUrl: string
-  transactionAmount: number
+  transactionAmount: string
   transactionDate: string
   potId?: string
 }
@@ -35,9 +35,10 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
       const fetchResult = await fetchHelper.doPost('/transactions/UpdateTransaction', data)
 
       if (fetchResult.data === false || fetchResult.errored) {
-        console.log('error')
+        notificationHelper.showErrorNotification('Error', 'Transaction failed to update', 5000, <IconCircleX />)
       } else {
-        notificationHelper.showSuccessNotification('Success', 'message', <IconCircleCheck />)
+        setTableRows(tableRows.filter(x => x !== row))
+        notificationHelper.showSuccessNotification('Success', 'Transaction processed successfully', 2000, <IconCircleCheck />)
       }
     }
   }
@@ -58,17 +59,20 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
           </Table.Thead>
           <Table.Tbody>
             {tableRows.map((row) => {
+              console.log(row)
               return (
                 <>
                   <Table.Tr key={row.id}>
                     <Table.Td>
-                      <Image
+                      {row.iconUrl !== ''
+                        ? <Image
                         className={classes.logo}
                         src={row.iconUrl}
                         width={48}
                         height={48}
                         alt='logo'
                       />
+                        : <IconPhotoX className={classes.logoMissing} /> }
                     </Table.Td>
                     <Table.Td>{row.merchantName}</Table.Td>
                     <Table.Td>{row.transactionAmount}</Table.Td>

@@ -5,7 +5,7 @@
         public required string Id { get; set; }
         public required string MerchantName { get; set; }
         public string? IconUrl { get; set; }
-        public decimal TransactionAmount { get; set; }
+        public string TransactionAmount { get; set; }
         public required string TransactionDate { get; set; }
     }
 }
