@@ -1,86 +1,64 @@
-import { Container, Grid } from '@mantine/core'
+import { type ComboboxItem, Container, Grid } from '@mantine/core'
 import classes from '../styles/ThisMonth.module.css'
-import TransactionsTable from '@/components/TransactionsTable'
+import TransactionsTable, { type TransactionTableData } from '@/components/TransactionsTable'
+import { type GetServerSideProps } from 'next'
+import backendFetchHelper from '@/helpers/BackendFetchHelper'
 
-const ThisMonth = (): JSX.Element => {
+interface PageProps {
+  potDropdownOptions: ComboboxItem[]
+  transactionData: TransactionTableData[]
+  potsStatsData: PotsStats[]
+}
+
+interface PotsStats {
+  potId: number
+  potName: string
+  isSavingsPot: boolean
+  amountAllocated: string
+  amountLeft: string
+  amountSpent: string
+}
+
+const ThisMonth = (props: PageProps): JSX.Element => {
   return (
     <>
       <h1>This Month</h1>
       <Container size='xl'>
         <Grid gutter={5}>
-          <Grid.Col span="auto">
-            <div className={classes.box}>
-              <h3 className={classes.header}>Pot 1</h3>
-              <p className={classes.amount}>Allocated: £100</p>
-              <p className={classes.amount}>Amount left: £100</p>
-              <p className={classes.amount}>Spent: £100</p>
-            </div>
-          </Grid.Col>
-          <Grid.Col span="auto">
-            <div className={classes.box}>
-              <h3 className={classes.header}>Pot 2</h3>
-              <p className={classes.amount}>Allocated: £100</p>
-              <p className={classes.amount}>Amount left: £100</p>
-              <p className={classes.amount}>Spent: £100</p>
-            </div>
-          </Grid.Col>
-          <Grid.Col span="auto">
-            <div className={classes.box}>
-              <h3 className={classes.header}>Pot 3</h3>
-              <p className={classes.amount}>Allocated: £100</p>
-              <p className={classes.amount}>Amount left: £100</p>
-              <p className={classes.amount}>Spent: £100</p>
-            </div>
-          </Grid.Col>
-          <Grid.Col span="auto">
-            <div className={classes.box}>
-              <h3 className={classes.header}>Pot 4</h3>
-              <p className={classes.amount}>Allocated: £100</p>
-              <p className={classes.amount}>Amount left: £100</p>
-              <p className={classes.amount}>Spent: £100</p>
-            </div>
-          </Grid.Col>
-          <Grid.Col span="auto">
-            <div className={classes.box}>
-              <h3 className={classes.header}>Pot 5</h3>
-              <p className={classes.amount}>Allocated: £100</p>
-              <p className={classes.amount}>Amount left: £100</p>
-              <p className={classes.amount}>Spent: £100</p>
-            </div>
-          </Grid.Col>
+          {props.potsStatsData.filter(x => !x.isSavingsPot).map((pot) => {
+            return (
+              <Grid.Col className={classes.potsCol} span={props.potsStatsData.filter(x => !x.isSavingsPot).length > 3 ? 'auto' : 3} key={pot.potId}>
+                <div className={classes.box}>
+                  <h3 className={classes.header}>{pot.potName}</h3>
+                  <p className={classes.amount}>Allocated: {pot.amountAllocated}</p>
+                  <p className={classes.amount}>Amount left: {pot.amountLeft}</p>
+                  <p className={classes.amount}>Spent: {pot.amountSpent}</p>
+                </div>
+              </Grid.Col>
+            )
+          })}
         </Grid>
       </Container>
 
       <h2>Savings Breakdown</h2>
       <Container size='lg'>
         <Grid gutter="lg" justify="center">
-          <Grid.Col span="content">
-            <div className={classes.savingsBox}>
-              <h3 className={classes.header}>Savings Pot 1</h3>
-              <p className={classes.amount}>Amount: £100</p>
-              <p className={classes.amount}>Change: £100</p>
-            </div>
-          </Grid.Col>
-          <Grid.Col span="content">
-            <div className={classes.savingsBox}>
-              <h3 className={classes.header}>Savings Pot 2</h3>
-              <p className={classes.amount}>Amount: £100</p>
-              <p className={classes.amount}>Change: £100</p>
-            </div>
-          </Grid.Col>
-          <Grid.Col span="content">
-            <div className={classes.savingsBox}>
-              <h3 className={classes.header}>Savings Pot 3</h3>
-              <p className={classes.amount}>Amount: £100</p>
-              <p className={classes.amount}>Change: £100</p>
-            </div>
-          </Grid.Col>
+          {props.potsStatsData.filter(x => x.isSavingsPot).map((pot) => {
+            return (
+              <Grid.Col span="content" key={pot.potId}>
+                <div className={classes.savingsBox}>
+                  <h3 className={classes.header}>{pot.potName}</h3>
+                  <p className={classes.amount}>{pot.amountAllocated}</p>
+                </div>
+              </Grid.Col>
+            )
+          })}
         </Grid>
       </Container>
 
       <h2>Transactions This Month</h2>
       <Container size='xl'>
-        <TransactionsTable />
+        <TransactionsTable removeRow={false} rows={props.transactionData} dropdownValues={props.potDropdownOptions} />
       </Container>
 
       <h2>Stats Breakdown</h2>
@@ -127,6 +105,22 @@ const ThisMonth = (): JSX.Element => {
       <br />
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async (ctx) => {
+  const potValuesFetchResponse = await backendFetchHelper.doGet('/Pots/GetPotDropdownValues')
+  const transactionsFetchResponse = await backendFetchHelper.doGet('/Transactions/GetProcessedTransactionsForMonth')
+  const potsStatsResponse = await backendFetchHelper.doGet('/Pots/GetPotsStats')
+
+  const pageProps: PageProps = {
+    potDropdownOptions: potValuesFetchResponse.data,
+    transactionData: transactionsFetchResponse.data,
+    potsStatsData: potsStatsResponse.data
+  }
+
+  return {
+    props: pageProps
+  }
 }
 
 export default ThisMonth

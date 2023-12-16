@@ -12,7 +12,7 @@
 .savingsBox {
     background-color: var(--mantine-color-dark-7);
     width: 220px;
-    height: 115px;
+    height: 90px;
     border-radius: 10px;
     color: white;
     margin-left: auto;
@@ -28,6 +28,11 @@
     color: white;
     margin-left: auto;
     margin-right: auto;
+    box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+}
+
+.statsBox h4 {
+    padding-top: 10px;
 }
 
 .statsBoxBig {
@@ -41,6 +46,10 @@
     margin-top: 30px;
 }
 
+.statsBoxBig h4 {
+    padding-top: 10px;
+}
+
 .header {
     text-align: center;
     padding-top: 5px;
@@ -50,6 +59,11 @@
 .amount {
     text-align: center;
     margin-top: -12px;
+}
+
+.potsCol {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 h2{

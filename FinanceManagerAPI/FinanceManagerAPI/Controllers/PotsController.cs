@@ -13,5 +13,11 @@ namespace FinanceManager.WebApi.Controllers
         {
             return await PotsData.GetPotDropdownValues();
         }
+
+        [HttpGet]
+        public async Task<GetPotsStatsDto[]> GetPotsStats()
+        {
+            return await PotsData.GetPotsStats();
+        }
     }
 }

@@ -15,6 +15,12 @@ namespace FinanceManager.WebApi.Controllers
             return await TransactionsData.GetUnprocessedTransactionsFromDatabase();
         }
 
+        [HttpGet]
+        public async Task<GetProcessedTransactionsForMonthDto[]> GetProcessedTransactionsForMonth()
+        {
+            return await TransactionsData.GetProcessedTransactionsForMonth();
+        }
+
         [HttpPost]
         public async Task<bool> UpdateTransaction([FromBody] UpdateTransactionRequest request)
         {

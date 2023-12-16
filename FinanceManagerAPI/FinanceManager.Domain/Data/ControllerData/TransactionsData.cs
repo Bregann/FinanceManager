@@ -24,6 +24,24 @@ namespace FinanceManager.Domain.Data.ControllerData
             }
         }
 
+        public static async Task<GetProcessedTransactionsForMonthDto[]> GetProcessedTransactionsForMonth()
+        {
+            using (var context = new DatabaseContext())
+            {
+                var startMonthDate = context.HistoricData.OrderByDescending(x => x.Id).First().MonthStart.Date;
+
+                return await context.Transactions.Where(x => x.Processed && x.TransactionDate.Date >= startMonthDate).Select(x => new GetProcessedTransactionsForMonthDto
+                {
+                    Id = x.Id,
+                    TransactionAmount = $"£{Math.Round(x.TransactionAmount / 100m, 2)}",
+                    IconUrl = x.ImgUrl,
+                    MerchantName = x.MerchantName,
+                    PotId = x.Pot != null ? x.Pot.Id.ToString() : null,
+                    TransactionDate = DateTimeHelper.HumanizeDateTime(x.TransactionDate)
+                }).ToArrayAsync();
+            }
+        }
+
         public static async Task<bool> UpdateTransaction(UpdateTransactionRequest request)
         {
             using (var context = new DatabaseContext())
