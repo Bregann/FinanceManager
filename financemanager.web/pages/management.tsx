@@ -1,7 +1,13 @@
-import { Button, Checkbox, Container, Grid, Group, Input, Select, Table } from '@mantine/core'
+import { Button, Checkbox, type ComboboxItem, Container, Grid, Group, Input, Select, Table } from '@mantine/core'
 import classes from '../styles/Management.module.css'
+import backendFetchHelper from '@/helpers/BackendFetchHelper'
+import { type GetServerSideProps } from 'next'
 
-const AutomaticTransactions = (): JSX.Element => {
+interface PageProps {
+  potDropdownOptions: ComboboxItem[]
+}
+
+const Page = (): JSX.Element => {
   return (
     <>
       <h1>Pot/Automatic Transactions Management</h1>
@@ -43,7 +49,7 @@ const AutomaticTransactions = (): JSX.Element => {
                       <Input defaultValue="£500" />
                     </Table.Td>
                     <Table.Td>
-                      <Checkbox style={{ paddingLeft: 15 }}/>
+                      <Checkbox style={{ paddingLeft: 15 }} />
                     </Table.Td>
                     <Table.Td style={{ textAlign: 'right' }}>
                       <Button variant='filled' color='green' className={classes.actionButton}>Save</Button>
@@ -58,7 +64,7 @@ const AutomaticTransactions = (): JSX.Element => {
                       <Input defaultValue="£500" />
                     </Table.Td>
                     <Table.Td>
-                      <Checkbox style={{ paddingLeft: 15 }}/>
+                      <Checkbox style={{ paddingLeft: 15 }} />
                     </Table.Td>
                     <Table.Td style={{ textAlign: 'right' }}>
                       <Button variant='filled' color='green' className={classes.actionButton}>Save</Button>
@@ -73,7 +79,7 @@ const AutomaticTransactions = (): JSX.Element => {
                       <Input defaultValue="£500" />
                     </Table.Td>
                     <Table.Td>
-                      <Checkbox style={{ paddingLeft: 15 }}/>
+                      <Checkbox style={{ paddingLeft: 15 }} />
                     </Table.Td>
                     <Table.Td style={{ textAlign: 'right' }}>
                       <Button variant='filled' color='green' className={classes.actionButton}>Save</Button>
@@ -88,7 +94,7 @@ const AutomaticTransactions = (): JSX.Element => {
                       <Input defaultValue="£500" />
                     </Table.Td>
                     <Table.Td>
-                      <Checkbox style={{ paddingLeft: 15 }}/>
+                      <Checkbox style={{ paddingLeft: 15 }} />
                     </Table.Td>
                     <Table.Td style={{ textAlign: 'right' }}>
                       <Button variant='filled' color='green' className={classes.actionButton}>Save</Button>
@@ -106,7 +112,7 @@ const AutomaticTransactions = (): JSX.Element => {
                 <Input.Wrapper label="Merchant Name" className={classes.inputWrapper} style={{ width: '50%' }}>
                   <Input placeholder="Input inside Input.Wrapper" />
                 </Input.Wrapper>
-                <Input.Wrapper label="Merchant Name" className={classes.inputWrapper} style={{ width: '20%' }}>
+                <Input.Wrapper label="Pot Name" className={classes.inputWrapper} style={{ width: '20%' }}>
                   <Select
                     placeholder='Pick value'
                     data={['Savings', 'None']}
@@ -118,7 +124,7 @@ const AutomaticTransactions = (): JSX.Element => {
               <Table className={classes.table} striped withTableBorder>
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th>Pot Name</Table.Th>
+                    <Table.Th>Merchant Name</Table.Th>
                     <Table.Th style={{ width: '30%' }}>Pot</Table.Th>
                     <Table.Th style={{ textAlign: 'right', width: '25%' }}>Actions</Table.Th>
                   </Table.Tr>
@@ -198,4 +204,16 @@ const AutomaticTransactions = (): JSX.Element => {
   )
 }
 
-export default AutomaticTransactions
+export const getServerSideProps: GetServerSideProps<PageProps> = async (ctx) => {
+  const potValuesFetchResponse = await backendFetchHelper.doGet('/Pots/GetPotDropdownValues')
+
+  const pageProps: PageProps = {
+    potDropdownOptions: potValuesFetchResponse.data
+  }
+
+  return {
+    props: pageProps
+  }
+}
+
+export default Page
