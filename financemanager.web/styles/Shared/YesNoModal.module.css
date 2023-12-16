@@ -1,0 +1,26 @@
+.modalHeader {
+    margin-top: -80px;
+    margin-bottom: -10px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+p {
+    margin-top: -5px;
+}
+
+.modalButtons {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.yesButton {
+    margin-right: 15px;
+    background-color: var(--mantine-color-green-9);
+}
+
+.noButton {
+    background-color: var(--mantine-color-red-7);
+}

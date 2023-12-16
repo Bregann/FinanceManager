@@ -16,7 +16,7 @@ namespace FinanceManager.Domain.Data.ControllerData
                 return await context.Transactions.Where(x => x.Processed == false).Select(x => new GetUnprocessedTransactionsDto
                 {
                     Id = x.Id,
-                    TransactionAmount = (x.TransactionAmount / 100m).ToString("C"),
+                    TransactionAmount = $"£{Math.Round(x.TransactionAmount / 100m, 2)}",
                     IconUrl = x.ImgUrl,
                     MerchantName = x.MerchantName,
                     TransactionDate = DateTimeHelper.HumanizeDateTime(x.TransactionDate)
@@ -55,6 +55,39 @@ namespace FinanceManager.Domain.Data.ControllerData
 
                 await context.SaveChangesAsync();
                 Log.Information("[Transactions] Pot and transaction updated");
+                return true;
+            }
+        }
+
+        public static async Task<bool> DeleteTransaction(string transactionId)
+        {
+            using (var context = new DatabaseContext())
+            {
+                var transaction = await context.Transactions.FirstOrDefaultAsync(x => x.Id == transactionId);
+
+                if (transaction == null)
+                {
+                    return false;
+                }
+
+                if (transaction.Pot != null)
+                {
+                    //Add back the money into the pot
+                    transaction.Pot!.PotAmountLeft += transaction.TransactionAmount;
+                    transaction.Pot!.PotAmountSpent -= transaction.TransactionAmount;
+                    transaction.Pot = null;
+                    transaction.Processed = true;
+                    await context.SaveChangesAsync();
+
+                    Log.Information("[Transactions] Transaction with pot marked as processed");
+
+                    return true;
+                }
+
+                transaction.Processed = true;
+                await context.SaveChangesAsync();
+                Log.Information("[Transactions] Transaction without pot marked as processed");
+
                 return true;
             }
         }

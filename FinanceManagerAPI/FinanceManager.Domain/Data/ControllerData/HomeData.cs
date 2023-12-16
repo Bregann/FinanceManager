@@ -17,10 +17,10 @@ namespace FinanceManager.Domain.Data.ControllerData
 
                 return new GetHomeStatsDto
                 {
-                    MoneyIn = monthlyData.MonthlyIncome.ToString("N0"),
-                    MoneyLeft = moneyLeft.ToString("N0"),
-                    MoneySpent = moneySpent.ToString("N0"),
-                    TotalSavings = totalSavings.ToString("N0")
+                    MoneyIn = $"£{Math.Round((monthlyData.MonthlyIncome / 100m), 2):N}",
+                    MoneyLeft = $"£{Math.Round((moneyLeft / 100m), 2):N}",
+                    MoneySpent = $"£{Math.Round((moneySpent / 100m), 2):N}",
+                    TotalSavings = $"£{Math.Round((totalSavings / 100m), 2):N}"
                 };
             }
         }

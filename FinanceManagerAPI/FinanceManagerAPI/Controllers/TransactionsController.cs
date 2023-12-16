@@ -20,5 +20,11 @@ namespace FinanceManager.WebApi.Controllers
         {
             return await TransactionsData.UpdateTransaction(request);
         }
+
+        [HttpPost("{transactionId}")]
+        public async Task<bool> DeleteTransaction([FromRoute] string transactionId)
+        {
+            return await TransactionsData.DeleteTransaction(transactionId);
+        }
     }
 }

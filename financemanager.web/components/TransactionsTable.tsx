@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import fetchHelper from '@/helpers/FetchHelper'
 import notificationHelper from '@/helpers/NotificationHelper'
+import YesNoModal from './Shared/YesNoModal'
 
 export interface TransactionTableData {
   id: string
@@ -23,23 +24,40 @@ interface TransactionsTableProps {
 
 const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
   const [tableRows, setTableRows] = useState<TransactionTableData[]>(props.rows)
-
+  const [showYesNoModal, setShowYesNoModal] = useState(false)
+  const [clickedRow, setClickedRow] = useState<TransactionTableData | null>(null)
   const UpdateDropdownChange = async (row: TransactionTableData, potId: number): Promise<void> => {
-    // only want to remove a row on the homepage
-    if (props.removeRow) {
-      const data = {
-        transactionId: row.id,
-        potId
+    const data = {
+      transactionId: row.id,
+      potId
+    }
+
+    const fetchResult = await fetchHelper.doPost('/transactions/UpdateTransaction', data)
+
+    if (fetchResult.data === false || fetchResult.errored) {
+      notificationHelper.showErrorNotification('Error', 'Transaction failed to update', 5000, <IconCircleX />)
+    } else {
+      if (props.removeRow) {
+        setTableRows(tableRows.filter(x => x !== row))
       }
 
-      const fetchResult = await fetchHelper.doPost('/transactions/UpdateTransaction', data)
+      notificationHelper.showSuccessNotification('Success', 'Transaction processed successfully', 2000, <IconCircleCheck />)
+    }
+  }
+
+  const DeleteTransaction = async (): Promise<void> => {
+    if (clickedRow !== null) {
+      const fetchResult = await fetchHelper.doPost(`/transactions/DeleteTransaction/${clickedRow.id}`, null)
 
       if (fetchResult.data === false || fetchResult.errored) {
-        notificationHelper.showErrorNotification('Error', 'Transaction failed to update', 5000, <IconCircleX />)
+        notificationHelper.showErrorNotification('Error', 'Transaction failed to remove', 5000, <IconCircleX />)
       } else {
-        setTableRows(tableRows.filter(x => x !== row))
-        notificationHelper.showSuccessNotification('Success', 'Transaction processed successfully', 2000, <IconCircleCheck />)
+        setTableRows(tableRows.filter(x => x !== clickedRow))
+        notificationHelper.showSuccessNotification('Success', 'Transaction removed successfully', 2000, <IconCircleCheck />)
       }
+
+      setShowYesNoModal(false)
+      setClickedRow(null)
     }
   }
 
@@ -59,7 +77,6 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
           </Table.Thead>
           <Table.Tbody>
             {tableRows.map((row) => {
-              console.log(row)
               return (
                 <>
                   <Table.Tr key={row.id}>
@@ -87,16 +104,21 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
                       />
                     </Table.Td>
                     <Table.Td>
-                      <IconTrash className={classes.binIco} />
+                      <IconTrash className={classes.binIco} onClick={() => { setClickedRow(row); setShowYesNoModal(true) }}/>
                     </Table.Td>
                   </Table.Tr>
-                  <Table.Tr></Table.Tr>
                 </>
               )
             })}
         </Table.Tbody>
       </Table>
-    </div >
+    </div>
+
+    <YesNoModal
+      text='Are you sure you want to delete this transaction? This cannot be undone!'
+      displayModal={showYesNoModal}
+      onHideModal={setShowYesNoModal}
+      onYesClicked={async () => { await DeleteTransaction() }} />
     </>
   )
 }
