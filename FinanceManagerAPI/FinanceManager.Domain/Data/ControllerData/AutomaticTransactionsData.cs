@@ -99,5 +99,13 @@ namespace FinanceManager.Domain.Data.ControllerData
                 };
             }
         }
+
+        public static async Task<bool> DeleteAutomaticTransaction(int transactionId)
+        {
+            using (var context = new DatabaseContext())
+            {
+                return await context.AutomaticTransactions.Where(x => x.Id == transactionId).ExecuteDeleteAsync() > 0;
+            }
+        }
     }
 }

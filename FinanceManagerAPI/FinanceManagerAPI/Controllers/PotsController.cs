@@ -39,5 +39,11 @@ namespace FinanceManager.WebApi.Controllers
         {
             return await PotsData.UpdatePot(request);
         }
+
+        [HttpDelete("{potId}")]
+        public async Task<bool> DeletePot([FromRoute] int potId)
+        {
+            return await PotsData.DeletePot(potId);
+        }
     }
 }

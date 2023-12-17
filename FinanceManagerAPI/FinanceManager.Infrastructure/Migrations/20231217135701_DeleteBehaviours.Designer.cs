@@ -3,6 +3,7 @@ using System;
 using FinanceManagerAPI.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceManager.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231217135701_DeleteBehaviours")]
+    partial class DeleteBehaviours
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,7 +187,7 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.HasOne("FinanceManager.Infrastructure.Database.Models.Pots", "Pot")
                         .WithMany()
                         .HasForeignKey("PotId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Pot");
@@ -194,7 +197,8 @@ namespace FinanceManager.Infrastructure.Migrations
                 {
                     b.HasOne("FinanceManager.Infrastructure.Database.Models.Pots", "Pot")
                         .WithMany()
-                        .HasForeignKey("PotId");
+                        .HasForeignKey("PotId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Pot");
                 });

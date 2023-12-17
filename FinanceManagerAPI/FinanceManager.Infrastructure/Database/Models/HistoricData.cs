@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FinanceManager.Infrastructure.Database.Models
 {
     public class HistoricData
     {
-        [Key]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public required DateTime MonthStart { get; set; }
         public required DateTime MonthEnd { get; set; }

@@ -27,5 +27,11 @@ namespace FinanceManager.WebApi.Controllers
         {
             return await AutomaticTransactionsData.UpdateAutomaticTransaction(request);
         }
+
+        [HttpDelete("{automaticTransactionId}")]
+        public async Task<bool> DeleteAutomaticTransaction([FromRoute] int automaticTransactionId)
+        {
+            return await AutomaticTransactionsData.DeleteAutomaticTransaction(automaticTransactionId);
+        }
     }
 }

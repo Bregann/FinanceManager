@@ -45,7 +45,7 @@ namespace FinanceManager.Domain.Data.ControllerData
                 {
                     PotId = x.Id,
                     PotName = x.PotName,
-                    PotAmount = Math.Round(x.PotAmount * 100m, 2),
+                    PotAmount = Math.Round(x.PotAmount / 100m, 2),
                     IsSavingsPot = x.IsSavingsPot
                 }).ToArrayAsync();
             }
@@ -102,7 +102,8 @@ namespace FinanceManager.Domain.Data.ControllerData
                     };
                 }
 
-                if (context.Pots.Any(x => x.PotName.ToLower() == request.PotName.Trim().ToLower()))
+                //Check if the name is being updated
+                if (pot.PotName.ToLower() != request.PotName.Trim().ToLower() && context.Pots.Any(x => x.PotName.ToLower() == request.PotName.Trim().ToLower()))
                 {
                     return new BoolReasonDto
                     {
@@ -121,6 +122,24 @@ namespace FinanceManager.Domain.Data.ControllerData
                     Success = true,
                     Reason = "Pot was updated succesfully"
                 };
+            }
+        }
+
+        public static async Task<bool> DeletePot(int potId)
+        {
+            using (var context = new DatabaseContext())
+            {
+                var pot = await context.Pots.FirstOrDefaultAsync(x => x.Id == potId);
+
+                if (pot == null)
+                {
+                    return false;
+                }
+
+                pot.Deleted = true;
+                await context.SaveChangesAsync();
+
+                return true;
             }
         }
     }
