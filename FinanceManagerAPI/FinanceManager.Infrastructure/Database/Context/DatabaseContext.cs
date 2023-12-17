@@ -12,7 +12,7 @@ namespace FinanceManagerAPI.Database.Context
         public DbSet<Transactions> Transactions { get; set; }
         public DbSet<Pots> Pots { get; set; }
         public DbSet<AutomaticTransactions> AutomaticTransactions { get; set; }
-        public DbSet<HistoricData> HistoricData {  get; set; }
+        public DbSet<HistoricData> HistoricData { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

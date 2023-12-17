@@ -4,12 +4,6 @@ using FinanceManager.Domain.Dtos.Controllers.Shared.Response;
 using FinanceManager.Infrastructure.Database.Models;
 using FinanceManagerAPI.Database.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FinanceManager.Domain.Data.ControllerData
 {
@@ -32,7 +26,7 @@ namespace FinanceManager.Domain.Data.ControllerData
         {
             using (var context = new DatabaseContext())
             {
-                if(context.AutomaticTransactions.Any(x => x.MerchantName.ToLower() == request.MerchantName.ToLower().Trim()))
+                if (context.AutomaticTransactions.Any(x => x.MerchantName.ToLower() == request.MerchantName.ToLower().Trim()))
                 {
                     return new AddAutomaticTransactionDto
                     {
@@ -41,7 +35,7 @@ namespace FinanceManager.Domain.Data.ControllerData
                     };
                 }
 
-                if(!context.Pots.Any(x => x.Id == request.PotId))
+                if (!context.Pots.Any(x => x.Id == request.PotId))
                 {
                     return new AddAutomaticTransactionDto
                     {
@@ -61,21 +55,21 @@ namespace FinanceManager.Domain.Data.ControllerData
                 await context.SaveChangesAsync();
 
                 return new AddAutomaticTransactionDto
-                { 
+                {
                     Success = true,
                     Reason = "Pot added succesfully",
                     AutomaticTransactionId = newTransaction.Id
                 };
             }
         }
-        
+
         public static async Task<BoolReasonDto> UpdateAutomaticTransaction(UpdateAutomaticTransactionRequest request)
         {
             using (var context = new DatabaseContext())
             {
                 var automaticTransaction = await context.AutomaticTransactions.FirstOrDefaultAsync(x => x.Id == request.Id);
 
-                if(automaticTransaction == null)
+                if (automaticTransaction == null)
                 {
                     return new BoolReasonDto
                     {
@@ -84,7 +78,7 @@ namespace FinanceManager.Domain.Data.ControllerData
                     };
                 }
 
-                if(!context.Pots.Any(x => x.Id != request.PotId))
+                if (!context.Pots.Any(x => x.Id != request.PotId))
                 {
                     return new BoolReasonDto
                     {

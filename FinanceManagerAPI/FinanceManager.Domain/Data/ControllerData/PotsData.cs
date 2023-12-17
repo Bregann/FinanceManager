@@ -4,7 +4,6 @@ using FinanceManager.Domain.Dtos.Controllers.Shared.Response;
 using FinanceManager.Infrastructure.Database.Models;
 using FinanceManagerAPI.Database.Context;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace FinanceManager.Domain.Data.ControllerData
 {
@@ -24,7 +23,7 @@ namespace FinanceManager.Domain.Data.ControllerData
 
         public static async Task<GetPotsStatsDto[]> GetPotsStats()
         {
-            using(var context = new DatabaseContext())
+            using (var context = new DatabaseContext())
             {
                 return await context.Pots.Where(x => x.Deleted == false).OrderBy(x => x.Id).Select(x => new GetPotsStatsDto
                 {
@@ -56,7 +55,7 @@ namespace FinanceManager.Domain.Data.ControllerData
         {
             using (var context = new DatabaseContext())
             {
-                if(context.Pots.Where(x => x.Deleted == false).Any(x => x.PotName.ToLower() == request.PotName.ToLower().Trim()))
+                if (context.Pots.Where(x => x.Deleted == false).Any(x => x.PotName.ToLower() == request.PotName.ToLower().Trim()))
                 {
                     return new AddNewPotDto
                     {
@@ -103,7 +102,7 @@ namespace FinanceManager.Domain.Data.ControllerData
                     };
                 }
 
-                if(context.Pots.Any(x => x.PotName.ToLower() == request.PotName.Trim().ToLower()))
+                if (context.Pots.Any(x => x.PotName.ToLower() == request.PotName.Trim().ToLower()))
                 {
                     return new BoolReasonDto
                     {

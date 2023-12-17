@@ -2,7 +2,6 @@
 using FinanceManager.Domain.Dtos.Controllers.AutomaticTransactions.Request;
 using FinanceManager.Domain.Dtos.Controllers.AutomaticTransactions.Responses;
 using FinanceManager.Domain.Dtos.Controllers.Shared.Response;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.WebApi.Controllers

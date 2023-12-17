@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FinanceManager.Domain.Dtos.Controllers.AutomaticTransactions.Responses
+﻿namespace FinanceManager.Domain.Dtos.Controllers.AutomaticTransactions.Responses
 {
     public class AutomaticTransactionDto
     {

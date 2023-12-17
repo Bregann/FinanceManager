@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 
 namespace FinanceManager.Infrastructure.Database.Models
 {
@@ -10,7 +9,7 @@ namespace FinanceManager.Infrastructure.Database.Models
         public required DateTime MonthStart { get; set; }
         public required DateTime MonthEnd { get; set; }
         public required decimal MonthlyIncome { get; set; }
-        public required decimal AmountSaved {  get; set; }
+        public required decimal AmountSaved { get; set; }
         public required decimal AmountSpent { get; set; }
     }
 }
