@@ -8,6 +8,8 @@ import notificationHelper from '@/helpers/NotificationHelper'
 import { IconCircleCheck, IconCircleX } from '@tabler/icons-react'
 import { type BoolReason } from '@/types/Shared/BoolReason'
 import { type AddNewPotResponse } from './api/pots/AddPot'
+import YesNoModal from '@/components/Shared/YesNoModal'
+import { type AddAutomaticTransactionResponse } from './api/automaticTransactions/AddNewAutomaticTransaction'
 
 interface PageProps {
   potDropdownOptions: ComboboxItem[]
@@ -34,6 +36,13 @@ const Page = (props: PageProps): JSX.Element => {
   const [addPotAmount, setAddPotAmount] = useState(0)
   const [addPotIsSavings, setAddPotIsSavings] = useState(false)
   const [addButtonDisabled, setAddButtonDisabled] = useState(false)
+  const [showDeletePotConfirmation, setShowDeletePotConfirmation] = useState(false)
+  const [clickedDeletedPot, setClickedDeletedPot] = useState(-1)
+
+  const [automaticTransactionData, setAutomaticTransactionData] = useState(props.automaticTransactionData)
+  const [addAutomaticTransactionMerchantName, setAddAutomaticTransactionMerchantName] = useState('')
+  const [addAutomaticTransactionPotId, setAddAutomaticTransactionPotId] = useState(0)
+  const [addAutomaticTransactionButtonDisabled, setAddAutomaticTransactionButtonDisabled] = useState(false)
 
   const updatePotDataField = (value: string, index: number, fieldName: string): void => {
     const newArr = [...potData]
@@ -124,8 +133,72 @@ const Page = (props: PageProps): JSX.Element => {
       notificationHelper.showErrorNotification('Error', 'There has been an error deleting the pot. Please try again', 5000, <IconCircleX />)
     } else {
       setPotData(potData.filter(x => x.potId !== potId))
+      setClickedDeletedPot(-1)
+      setShowDeletePotConfirmation(false)
       notificationHelper.showSuccessNotification('Delete Pot Successful', 'The pot has been deleted successfully', 3000, <IconCircleCheck />)
     }
+  }
+
+  const addNewAutomaticTransaction = async (): Promise<void> => {
+    setAddAutomaticTransactionButtonDisabled(true)
+
+    if (addAutomaticTransactionMerchantName === '' || addAutomaticTransactionPotId === 0) {
+      notificationHelper.showErrorNotification('Error', 'The merchant name or pot is missing', 5000, <IconCircleX />)
+    }
+
+    const data = {
+      potId: addAutomaticTransactionPotId,
+      merchantName: addAutomaticTransactionMerchantName
+    }
+
+    const fetchResult = await fetchHelper.doPost('/automaticTransactions/AddNewAutomaticTransaction', data)
+
+    if (fetchResult.errored) {
+      notificationHelper.showErrorNotification('Error Submitting Request', 'There has been an error submitting the request. Please try again', 5000, <IconCircleX />)
+      return
+    }
+
+    const responseData: AddAutomaticTransactionResponse = fetchResult.data
+
+    if (!responseData.success) {
+      notificationHelper.showErrorNotification('Error Updating', responseData.reason, 5000, <IconCircleX />)
+    } else {
+      setAutomaticTransactionData(automaticTransactionData => [...automaticTransactionData, {
+        id: responseData.automaticTransactionId ?? -1,
+        merchantName: addAutomaticTransactionMerchantName,
+        potId: addAutomaticTransactionPotId.toString()
+      }])
+
+      notificationHelper.showSuccessNotification('Add Automatic Transaction Successful', 'The automatic transaction has been added successfully', 3000, <IconCircleCheck />)
+      setAddAutomaticTransactionMerchantName('')
+      setAddAutomaticTransactionPotId(0)
+      setAddAutomaticTransactionButtonDisabled(false)
+    }
+  }
+
+  const updateAutomaticTransactionField = (value: string, index: number, fieldName: string): void => {
+    const newArr = [...automaticTransactionData]
+
+    switch (fieldName) {
+      case 'merchantName':
+        newArr[index].merchantName = value
+        break
+      case 'potId':
+        newArr[index].potId = value
+        break
+      default:
+        break
+    }
+
+    setAutomaticTransactionData(newArr)
+  }
+
+  const saveAutomaticTransactionChange = async (automaticTransaction: AutomaticTransactionList): Promise<void> => {
+
+  }
+
+  const deleteAutomaticTransaction = async (automaticTransactionId: number): Promise<void> => {
+
   }
 
   return (
@@ -138,10 +211,10 @@ const Page = (props: PageProps): JSX.Element => {
               <h2>Pots</h2>
               <Group justify='center'>
                 <Input.Wrapper label="Name" className={classes.inputWrapper} style={{ width: '50%' }}>
-                  <Input defaultValue={addPotName} onChange={(e) => { setAddPotName(e.target.value) }}/>
+                  <Input defaultValue={addPotName} onChange={(e) => { setAddPotName(e.target.value) }} />
                 </Input.Wrapper>
                 <Input.Wrapper label="Amount" className={classes.inputWrapper} style={{ width: '10%' }}>
-                  <Input defaultValue={addPotAmount} onChange={(e) => { setAddPotAmount(Number(e.target.value)) }}/>
+                  <Input defaultValue={addPotAmount} onChange={(e) => { setAddPotAmount(Number(e.target.value)) }} />
                 </Input.Wrapper>
                 <Checkbox
                   className={classes.checkBoxButton}
@@ -166,17 +239,17 @@ const Page = (props: PageProps): JSX.Element => {
                     return (
                       <Table.Tr key={pot.potId}>
                         <Table.Td>
-                          <Input defaultValue={pot.potName} onChange={(e) => { updatePotDataField(e.target.value, index, 'name') }}/>
+                          <Input defaultValue={pot.potName} onChange={(e) => { updatePotDataField(e.target.value, index, 'name') }} />
                         </Table.Td>
                         <Table.Td width="15%">
-                          <Input defaultValue={pot.potAmount} onChange={(e) => { updatePotDataField(e.target.value, index, 'amount') }}/>
+                          <Input defaultValue={pot.potAmount} onChange={(e) => { updatePotDataField(e.target.value, index, 'amount') }} />
                         </Table.Td>
                         <Table.Td>
-                          <Checkbox style={{ paddingLeft: 15 }} color="blue" checked={pot.isSavingsPot}/>
+                          <Checkbox style={{ paddingLeft: 15 }} color="blue" checked={pot.isSavingsPot} />
                         </Table.Td>
                         <Table.Td style={{ textAlign: 'right' }}>
                           <Button variant='filled' color='green' className={classes.actionButton} onClick={async () => { await savePotChange(pot) }}>Save</Button>
-                          <Button variant='filled' color='red' onClick={async () => { await deletePot(pot.potId) }}>Delete</Button>
+                          <Button variant='filled' color='red' onClick={() => { setClickedDeletedPot(pot.potId); setShowDeletePotConfirmation(true) }}>Delete</Button>
                         </Table.Td>
                       </Table.Tr>
                     )
@@ -190,16 +263,17 @@ const Page = (props: PageProps): JSX.Element => {
               <h2>Automatic Transactions</h2>
               <Group justify='center'>
                 <Input.Wrapper label="Merchant Name" className={classes.inputWrapper} style={{ width: '50%' }}>
-                  <Input placeholder="Input inside Input.Wrapper" />
+                  <Input value={addAutomaticTransactionMerchantName} onChange={(e) => { setAddAutomaticTransactionMerchantName(e.target.value) }}/>
                 </Input.Wrapper>
                 <Input.Wrapper label="Pot Name" className={classes.inputWrapper} style={{ width: '20%' }}>
                   <Select
                     placeholder='Pick value'
-                    data={['Savings', 'None']}
+                    data={props.potDropdownOptions}
                     comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
+                    onChange={(e) => { setAddAutomaticTransactionPotId(Number(e)) }}
                   />
                 </Input.Wrapper>
-                <Button className={classes.automaticTransactionsButton}>Add</Button>
+                <Button className={classes.automaticTransactionsButton} onClick={async () => { await addNewAutomaticTransaction() }} disabled={addAutomaticTransactionButtonDisabled}>Add</Button>
               </Group>
               <Table className={classes.table} striped withTableBorder>
                 <Table.Thead>
@@ -210,75 +284,35 @@ const Page = (props: PageProps): JSX.Element => {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  <Table.Tr>
-                    <Table.Td>
-                      <Input defaultValue="Tilly" />
-                    </Table.Td>
-                    <Table.Td>
-                      <Select
-                        placeholder='Pick value'
-                        data={['Savings', 'None']}
-                        comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
-                      />
-                    </Table.Td>
-                    <Table.Td style={{ textAlign: 'right' }}>
-                      <Button variant='filled' color='green' className={classes.actionButton}>Save</Button>
-                      <Button variant='filled' color='red'>Delete</Button>
-                    </Table.Td>
-                  </Table.Tr>
-                  <Table.Tr>
-                    <Table.Td>
-                      <Input defaultValue="Tilly" />
-                    </Table.Td>
-                    <Table.Td>
-                      <Select
-                        placeholder='Pick value'
-                        data={['Savings', 'None']}
-                        comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
-                      />
-                    </Table.Td>
-                    <Table.Td style={{ textAlign: 'right' }}>
-                      <Button variant='filled' color='green' className={classes.actionButton}>Save</Button>
-                      <Button variant='filled' color='red'>Delete</Button>
-                    </Table.Td>
-                  </Table.Tr>
-                  <Table.Tr>
-                    <Table.Td>
-                      <Input defaultValue="Tilly" />
-                    </Table.Td>
-                    <Table.Td>
-                      <Select
-                        placeholder='Pick value'
-                        data={['Savings', 'None']}
-                        comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
-                      />
-                    </Table.Td>
-                    <Table.Td style={{ textAlign: 'right' }}>
-                      <Button variant='filled' color='green' className={classes.actionButton}>Save</Button>
-                      <Button variant='filled' color='red'>Delete</Button>
-                    </Table.Td>
-                  </Table.Tr>
-                  <Table.Tr>
-                    <Table.Td>
-                      <Input defaultValue="Tilly" />
-                    </Table.Td>
-                    <Table.Td>
-                      <Select
-                        placeholder='Pick value'
-                        data={['Savings', 'None']}
-                        comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
-                      />
-                    </Table.Td>
-                    <Table.Td style={{ textAlign: 'right' }}>
-                      <Button variant='filled' color='green' className={classes.actionButton}>Save</Button>
-                      <Button variant='filled' color='red'>Delete</Button>
-                    </Table.Td>
-                  </Table.Tr>
+                  {automaticTransactionData.map((automaticTransaction, index) => {
+                    return (
+                      <Table.Tr key={automaticTransaction.id}>
+                        <Table.Td>
+                          <Input value={automaticTransaction.merchantName} onChange={(e) => { updateAutomaticTransactionField(e.target.value, index, 'merchantName') }}/>
+                        </Table.Td>
+                        <Table.Td>
+                          <Select
+                            value={automaticTransaction.potId}
+                            placeholder='Pick value'
+                            data={props.potDropdownOptions}
+                            comboboxProps={{ transitionProps: { transition: 'pop', duration: 200 } }}
+                            onChange={(e) => { updateAutomaticTransactionField(e ?? '', index, 'potId') }}
+                          />
+                        </Table.Td>
+                        <Table.Td style={{ textAlign: 'right' }}>
+                          <Button variant='filled' color='green' className={classes.actionButton} onClick={async () => { await saveAutomaticTransactionChange(automaticTransaction) }}>Save</Button>
+                          <Button variant='filled' color='red' onClick={async () => { await deleteAutomaticTransaction(automaticTransaction.id) }}>Delete</Button>
+                        </Table.Td>
+                      </Table.Tr>
+                    )
+                  })}
                 </Table.Tbody>
               </Table>
             </div>
           </Grid.Col>
         </Grid>
+
+        <YesNoModal displayModal={showDeletePotConfirmation} text='Are you sure you want to delete this pot?' onHideModal={() => { setShowDeletePotConfirmation(false) }} onYesClicked={async () => { await deletePot(clickedDeletedPot) }} />
       </Container>
     </>
   )
