@@ -161,7 +161,8 @@ const Page = (props: PageProps): JSX.Element => {
     const responseData: AddAutomaticTransactionResponse = fetchResult.data
 
     if (!responseData.success) {
-      notificationHelper.showErrorNotification('Error Updating', responseData.reason, 5000, <IconCircleX />)
+      notificationHelper.showErrorNotification('Error Adding', responseData.reason, 5000, <IconCircleX />)
+      setAddAutomaticTransactionButtonDisabled(false)
     } else {
       setAutomaticTransactionData(automaticTransactionData => [...automaticTransactionData, {
         id: responseData.automaticTransactionId ?? -1,
@@ -194,11 +195,38 @@ const Page = (props: PageProps): JSX.Element => {
   }
 
   const saveAutomaticTransactionChange = async (automaticTransaction: AutomaticTransactionList): Promise<void> => {
+    const fetchResult = await fetchHelper.doPost('/automaticTransactions/UpdateAutomaticTransaction', automaticTransaction)
 
+    if (fetchResult.errored) {
+      notificationHelper.showErrorNotification('Error Updating', 'There has been an error updating the automatic transaction. Please try again', 5000, <IconCircleX />)
+      return
+    }
+
+    const responseData: BoolReason = fetchResult.data
+
+    if (!responseData.success) {
+      notificationHelper.showErrorNotification('Error Updating', responseData.reason, 5000, <IconCircleX />)
+    } else {
+      notificationHelper.showSuccessNotification('Update Automatic Transaction Successful', 'The automatic transaction has been updated successfully', 3000, <IconCircleCheck />)
+    }
   }
 
   const deleteAutomaticTransaction = async (automaticTransactionId: number): Promise<void> => {
+    const fetchResult = await fetchHelper.doDelete(`/automaticTransactions/DeleteAutomaticTransaction/${automaticTransactionId}`)
 
+    if (fetchResult.errored) {
+      notificationHelper.showErrorNotification('Error Deleting', 'There has been an error deleting the automatic transaction. Please try again', 5000, <IconCircleX />)
+      return
+    }
+
+    const responseSuccess: boolean = fetchResult.data
+
+    if (!responseSuccess) {
+      notificationHelper.showErrorNotification('Error Deleting', 'There has been an error deleting the automatic transaction. Please try again', 5000, <IconCircleX />)
+    } else {
+      notificationHelper.showSuccessNotification('Delete Automatic Transaction Successful', 'The automatic transaction has been deleted successfully', 3000, <IconCircleCheck />)
+      setAutomaticTransactionData(automaticTransactionData.filter(x => x.id !== automaticTransactionId))
+    }
   }
 
   return (
