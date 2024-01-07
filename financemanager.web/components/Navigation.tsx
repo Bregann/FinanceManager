@@ -4,10 +4,13 @@ import classes from '../styles/Nav.module.css'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { IconCalendarPlus } from '@tabler/icons-react'
+import { useState } from 'react'
+import AddNewMonthModal from './AddNewMonthModal'
 
 const Navigation = (): JSX.Element => {
   const [opened, { toggle }] = useDisclosure()
   const router = useRouter()
+  const [addMonthDisplayed, setAddMonthDisplayed] = useState(false)
 
   return (
     <>
@@ -23,7 +26,7 @@ const Navigation = (): JSX.Element => {
           <Link href='/management' >
             <UnstyledButton className={router.pathname === '/management' ? classes.linkActive : classes.link}>Management</UnstyledButton>
           </Link>
-          <IconCalendarPlus className={classes.addMonthIco}/>
+          <IconCalendarPlus className={classes.addMonthIco} onClick={() => { setAddMonthDisplayed(true) }}/>
         </Group>
         <Burger
           className={classes.burger}
@@ -34,12 +37,13 @@ const Navigation = (): JSX.Element => {
           </Container>
       </header>
 
+      <AddNewMonthModal displayModal={addMonthDisplayed} hideModal={() => { setAddMonthDisplayed(false) }}/>
+
       <Drawer
         opened={opened}
         onClose={toggle}
         size='100%'
       >
-
       </Drawer>
     </>
 

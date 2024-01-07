@@ -13,7 +13,7 @@
     margin-left: 25px;
 }
 
-@media (max-width:1566px){
+@media (max-width:1566px) {
     .checkBoxButton{
         margin-left: 20px;
     }
@@ -34,11 +34,11 @@
     margin-top: 20px;
 }
 
-.actionButton{
+.actionButton {
     margin-Right: 10px;
 }
 
-@media (max-width: 1802px){
+@media (max-width: 1802px) {
     .actionButton {
         margin-bottom: 10px;
     }
