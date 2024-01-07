@@ -78,7 +78,6 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
           <Table.Tbody>
             {tableRows.map((row) => {
               return (
-                <>
                   <Table.Tr key={row.id}>
                     <Table.Td>
                       {row.iconUrl !== ''
@@ -107,7 +106,6 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
                       <IconTrash className={classes.binIco} onClick={() => { setClickedRow(row); setShowYesNoModal(true) }}/>
                     </Table.Td>
                   </Table.Tr>
-                </>
               )
             })}
         </Table.Tbody>
