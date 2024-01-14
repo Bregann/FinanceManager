@@ -10,18 +10,12 @@ import { type BoolReason } from '@/types/Shared/BoolReason'
 import { type AddNewPotResponse } from './api/pots/AddPot'
 import YesNoModal from '@/components/Shared/YesNoModal'
 import { type AddAutomaticTransactionResponse } from './api/automaticTransactions/AddNewAutomaticTransaction'
+import { type PotList } from './api/pots/GetPotList'
 
 interface PageProps {
   potDropdownOptions: ComboboxItem[]
   potData: PotList[]
   automaticTransactionData: AutomaticTransactionList[]
-}
-
-export interface PotList {
-  potId: number
-  potName: string
-  potAmount: number
-  isSavingsPot: boolean
 }
 
 export interface AutomaticTransactionList {

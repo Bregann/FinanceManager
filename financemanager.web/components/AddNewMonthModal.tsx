@@ -1,5 +1,10 @@
 import { Button, Divider, Grid, Group, Input, Modal } from '@mantine/core'
 import classes from '../styles/AddNewMonthModal.module.css'
+import { useEffect, useState } from 'react'
+import fetchHelper from '@/helpers/FetchHelper'
+import notificationHelper from '@/helpers/NotificationHelper'
+import { IconCircleX } from '@tabler/icons-react'
+import { type PotList } from '@/pages/api/pots/GetPotList'
 
 export interface AddNewMonthModalProps {
   displayModal: boolean
@@ -7,46 +12,52 @@ export interface AddNewMonthModalProps {
 }
 
 const AddNewMonthModal = (props: AddNewMonthModalProps): JSX.Element => {
+  const [potList, setPotList] = useState<PotList[] | undefined>(undefined)
+  const [totalPotAmount, setTotalPotAmount] = useState(0)
+  const [incomeForMonth, setIncomeForMonth] = useState(0)
+
+  useEffect(() => {
+    if (props.displayModal) {
+      void (async () => {
+        const fetchResponse = await fetchHelper.doGet('/pots/GetPotList')
+
+        if (fetchResponse.errored) {
+          notificationHelper.showErrorNotification('Error', 'Error getting pots from database', 5000, <IconCircleX />)
+        } else {
+          const data: PotList[] = fetchResponse.data
+          const summedPotAmounts = data.reduce((sum, { potAmount }) => sum + potAmount, 0)
+          setTotalPotAmount(summedPotAmounts)
+          setPotList(data)
+        }
+      })()
+    } else {
+      setPotList(undefined)
+      setTotalPotAmount(0)
+      setIncomeForMonth(0)
+    }
+  }, [props.displayModal])
   return (
+
     <>
       <Modal opened={props.displayModal} onClose={() => { props.hideModal() }} closeOnClickOutside={false} title="Add Month" classNames={{ title: classes.modalTitle }}>
         <Input.Wrapper label="Income This Month" className={classes.inputWrapper}>
-          <Input onChange={(e) => { console.log('lol') }} />
+          <Input onChange={(e) => { setIncomeForMonth(Number.parseFloat(e.target.value)) }} />
         </Input.Wrapper>
         <h4>Pot Breakdown</h4>
         <Grid>
-          <Grid.Col span={4}>
-            <h5>Savings</h5>
-            <p>£500</p>
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <h5>Savings</h5>
-            <p>£500</p>
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <h5>Savings</h5>
-            <p>£500</p>
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <h5>Savings</h5>
-            <p>£500</p>
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <h5>Savings</h5>
-            <p>£500</p>
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <h5>Savings</h5>
-            <p>£500</p>
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <h5>Savings</h5>
-            <p>£500</p>
-          </Grid.Col>
+          {potList?.map((pot) => {
+            return (
+              <Grid.Col span={4} key={pot.potId}>
+              <h5>{pot.potName}</h5>
+              <p>&pound;{pot.potAmount}</p>
+            </Grid.Col>
+            )
+          })
+        }
         </Grid>
         <Divider style={{ paddingBottom: 20 }} />
         <h5>Spare Money</h5>
-        <p>£500</p>
+        <p>{isNaN(incomeForMonth) ? 'Invalid input' : `£${(totalPotAmount - incomeForMonth).toFixed(2)}`}</p>
         <Group justify='center'>
           <Button color='green'>Add Month</Button>
           <Button color='red' onClick={() => { props.hideModal() }}>Cancel</Button>
