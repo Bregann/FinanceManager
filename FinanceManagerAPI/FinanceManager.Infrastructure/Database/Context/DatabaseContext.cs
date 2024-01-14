@@ -16,7 +16,16 @@ namespace FinanceManagerAPI.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            modelBuilder.Entity<Pots>().HasData(new Pots
+            {
+                Id = 1,
+                IsSavingsPot = false,
+                PotAmount = 0,
+                PotAmountLeft = 0,
+                PotAmountSpent = 0,
+                PotName = "Spare Money",
+                Deleted = false
+            });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -3,7 +3,7 @@ import classes from '../styles/AddNewMonthModal.module.css'
 import { useEffect, useState } from 'react'
 import fetchHelper from '@/helpers/FetchHelper'
 import notificationHelper from '@/helpers/NotificationHelper'
-import { IconCircleX } from '@tabler/icons-react'
+import { IconCircleCheck, IconCircleX } from '@tabler/icons-react'
 import { type PotList } from '@/pages/api/pots/GetPotList'
 
 export interface AddNewMonthModalProps {
@@ -36,8 +36,22 @@ const AddNewMonthModal = (props: AddNewMonthModalProps): JSX.Element => {
       setIncomeForMonth(0)
     }
   }, [props.displayModal])
-  return (
 
+  const addMonth = async (): Promise<void> => {
+    const fetchResult = await fetchHelper.doPost('/newMonth/AddNewMonth', { income: incomeForMonth })
+
+    if (fetchResult.errored || fetchResult.data === false) {
+      notificationHelper.showErrorNotification('Error', 'Failed to add month', 5000, <IconCircleX />)
+    } else {
+      notificationHelper.showSuccessNotification('Success', 'Month added successfully', 2000, <IconCircleCheck />)
+      setPotList(undefined)
+      setTotalPotAmount(0)
+      setIncomeForMonth(0)
+      props.hideModal()
+    }
+  }
+
+  return (
     <>
       <Modal opened={props.displayModal} onClose={() => { props.hideModal() }} closeOnClickOutside={false} title="Add Month" classNames={{ title: classes.modalTitle }}>
         <Input.Wrapper label="Income This Month" className={classes.inputWrapper}>
@@ -59,7 +73,7 @@ const AddNewMonthModal = (props: AddNewMonthModalProps): JSX.Element => {
         <h5>Spare Money</h5>
         <p>{isNaN(incomeForMonth) ? 'Invalid input' : `£${(totalPotAmount - incomeForMonth).toFixed(2)}`}</p>
         <Group justify='center'>
-          <Button color='green'>Add Month</Button>
+          <Button color='green' onClick={async () => { await addMonth() }}>Add Month</Button>
           <Button color='red' onClick={() => { props.hideModal() }}>Cancel</Button>
         </Group>
 

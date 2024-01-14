@@ -41,7 +41,7 @@ namespace FinanceManager.Domain.Data.ControllerData
         {
             using (var context = new DatabaseContext())
             {
-                return await context.Pots.Where(x => x.Deleted == false).OrderBy(x => x.Id).Select(x => new GetPotListDto
+                return await context.Pots.Where(x => x.Deleted == false && x.Id > 1).OrderBy(x => x.Id).Select(x => new GetPotListDto
                 {
                     PotId = x.Id,
                     PotName = x.PotName,
@@ -65,6 +65,8 @@ namespace FinanceManager.Domain.Data.ControllerData
                 }
 
                 var amount = (long)(request.Amount * 100);
+
+                //If it's a savings pot these behave differently
 
                 var newPot = new Pots
                 {
@@ -92,6 +94,15 @@ namespace FinanceManager.Domain.Data.ControllerData
         {
             using (var context = new DatabaseContext())
             {
+                if(request.PotId == 1)
+                {
+                    return new BoolReasonDto
+                    {
+                        Success = false,
+                        Reason = "Pot cannot be changed"
+                    };
+                }
+
                 var pot = await context.Pots.FirstOrDefaultAsync(x => x.Id == request.PotId);
                 if (pot == null)
                 {
@@ -129,6 +140,11 @@ namespace FinanceManager.Domain.Data.ControllerData
         {
             using (var context = new DatabaseContext())
             {
+                if(potId == 1)
+                {
+                    return false;
+                }
+
                 var pot = await context.Pots.FirstOrDefaultAsync(x => x.Id == potId);
 
                 if (pot == null)
