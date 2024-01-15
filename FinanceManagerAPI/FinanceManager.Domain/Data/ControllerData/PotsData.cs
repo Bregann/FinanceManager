@@ -66,8 +66,6 @@ namespace FinanceManager.Domain.Data.ControllerData
 
                 var amount = (long)(request.Amount * 100);
 
-                //If it's a savings pot these behave differently
-
                 var newPot = new Pots
                 {
                     PotName = request.PotName.Trim(),

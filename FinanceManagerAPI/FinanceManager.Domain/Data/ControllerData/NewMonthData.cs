@@ -1,4 +1,5 @@
-﻿using FinanceManagerAPI.Database.Context;
+﻿using FinanceManager.Infrastructure.Database.Models;
+using FinanceManagerAPI.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,8 @@ namespace FinanceManager.Domain.Data.ControllerData
         {
             using (var context = new DatabaseContext())
             {
-                var pots = await context.Pots.ToArrayAsync();
-                var incomeInPence = income * 100;
+                var pots = await context.Pots.Where(x => !x.Deleted).ToArrayAsync();
+                var incomeInPence = (long)income * 100;
 
                 //Update the last month if there is a month in there (won't be for first use)
                 if (context.HistoricData.Any())
@@ -27,14 +28,15 @@ namespace FinanceManager.Domain.Data.ControllerData
                     await context.SaveChangesAsync();
                 }
 
-                var spareMoney = (long)incomeInPence - pots.Sum(x => x.PotAmount);
+                var spareMoney = incomeInPence - pots.Sum(x => x.PotAmount);
 
                 //Reset the pots
                 foreach (var pot in pots)
                 {
-                    //don't touch the savings pots
+                    //Add the extra money into the savings
                     if (pot.IsSavingsPot)
                     {
+                        pot.PotAmountLeft += pot.PotAmount; //Pot amount is how much monthly to allocate
                         continue;
                     }
 
@@ -49,6 +51,18 @@ namespace FinanceManager.Domain.Data.ControllerData
 
                     pot.PotAmountLeft = pot.PotAmount;
                 }
+
+                await context.SaveChangesAsync();
+
+                //Add in the new month to the historic data
+                await context.HistoricData.AddAsync(new HistoricData
+                {
+                    MonthStart = DateTime.UtcNow,
+                    MonthEnd = new DateTime(),
+                    AmountSaved = pots.Where(x => x.IsSavingsPot).Sum(x => x.PotAmount),
+                    AmountSpent = 0,
+                    MonthlyIncome = incomeInPence
+                });
 
                 await context.SaveChangesAsync();
             }

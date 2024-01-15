@@ -1,4 +1,5 @@
 ﻿using FinanceManager.Domain.Data.ControllerData;
+using FinanceManager.Domain.Dtos.Controllers.NewMonth.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.WebApi.Controllers
@@ -8,9 +9,9 @@ namespace FinanceManager.WebApi.Controllers
     public class NewMonthController
     {
         [HttpPost]
-        public async Task<bool> AddNewMonth([FromBody] double income)
+        public async Task<bool> AddNewMonth([FromBody] AddNewMonth income)
         {
-            return await NewMonthData.AddNewMonth(income);
+            return await NewMonthData.AddNewMonth(income.Income);
         }
     }
 }

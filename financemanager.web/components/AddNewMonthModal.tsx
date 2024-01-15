@@ -71,7 +71,7 @@ const AddNewMonthModal = (props: AddNewMonthModalProps): JSX.Element => {
         </Grid>
         <Divider style={{ paddingBottom: 20 }} />
         <h5>Spare Money</h5>
-        <p>{isNaN(incomeForMonth) ? 'Invalid input' : `£${(totalPotAmount - incomeForMonth).toFixed(2)}`}</p>
+        <p>{isNaN(incomeForMonth) ? 'Invalid input' : `£${(incomeForMonth - totalPotAmount).toFixed(2)}`}</p>
         <Group justify='center'>
           <Button color='green' onClick={async () => { await addMonth() }}>Add Month</Button>
           <Button color='red' onClick={() => { props.hideModal() }}>Cancel</Button>
