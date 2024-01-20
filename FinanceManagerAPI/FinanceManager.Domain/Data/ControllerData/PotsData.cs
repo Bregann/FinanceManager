@@ -31,7 +31,7 @@ namespace FinanceManager.Domain.Data.ControllerData
                     PotName = x.PotName,
                     IsSavingsPot = x.IsSavingsPot,
                     AmountAllocated = $"£{Math.Round(x.PotAmount / 100m, 2)}",
-                    AmountLeft = $"£{Math.Round(x.PotAmountLeft / 100m, 2)}",
+                    AmountLeft = Math.Round(x.PotAmountLeft / 100m, 2),
                     AmountSpent = $"£{Math.Round(x.PotAmountSpent / 100m, 2)}"
                 }).ToArrayAsync();
             }
@@ -154,6 +154,35 @@ namespace FinanceManager.Domain.Data.ControllerData
                 await context.SaveChangesAsync();
 
                 return true;
+            }
+        }
+
+        public static async Task<UpdateSavingsPotDto> UpdateSavingsPot(UpdateSavingsPotRequest request)
+        {
+            using (var context = new DatabaseContext())
+            {
+                var pot = await context.Pots.FirstOrDefaultAsync(x => x.Id == request.PotId);
+
+                if (pot == null)
+                {
+                    return new UpdateSavingsPotDto
+                    {
+                        Success = false,
+                        Reason = "Pot does not exist"
+                    };
+                }
+
+                var savingsInPence = (long)(request.SavingsAmount * 100);
+
+                pot.PotAmountLeft = savingsInPence;
+                await context.SaveChangesAsync();
+
+                return new UpdateSavingsPotDto
+                {
+                    Success = true,
+                    Reason = "",
+                    Amount = Math.Round(pot.PotAmountLeft / 100m, 2)
+                };
             }
         }
     }

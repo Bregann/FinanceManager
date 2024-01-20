@@ -45,5 +45,11 @@ namespace FinanceManager.WebApi.Controllers
         {
             return await PotsData.DeletePot(potId);
         }
+
+        [HttpPost]
+        public async Task<UpdateSavingsPotDto> UpdateSavingsPot([FromBody] UpdateSavingsPotRequest request)
+        {
+            return await PotsData.UpdateSavingsPot(request);
+        }
     }
 }

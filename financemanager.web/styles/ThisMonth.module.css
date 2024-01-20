@@ -20,6 +20,13 @@
     box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
 }
 
+.savingsPencilEdit {
+    margin-top: -80px;
+    margin-bottom: 24px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
 .statsBox {
     background-color: var(--mantine-color-dark-7);
     width: 90%;

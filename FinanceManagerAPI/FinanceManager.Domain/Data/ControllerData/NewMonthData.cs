@@ -16,7 +16,7 @@ namespace FinanceManager.Domain.Data.ControllerData
             using (var context = new DatabaseContext())
             {
                 var pots = await context.Pots.Where(x => !x.Deleted).ToArrayAsync();
-                var incomeInPence = (long)income * 100;
+                var incomeInPence = (long)(income * 100);
 
                 //Update the last month if there is a month in there (won't be for first use)
                 if (context.HistoricData.Any())
