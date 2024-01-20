@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: "standalone",
   images: {
     remotePatterns: [
       {
@@ -8,7 +9,7 @@ const nextConfig = {
         hostname: 'merchant-logos.monzo.com',
       }
     ],
-  }
+  },
 }
 
 module.exports = nextConfig
