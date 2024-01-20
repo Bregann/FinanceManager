@@ -13,7 +13,7 @@ namespace FinanceManager.Domain.Data.ControllerData
         {
             using (var context = new DatabaseContext())
             {
-                return await context.Transactions.Where(x => x.Processed == false).Select(x => new GetUnprocessedTransactionsDto
+                return await context.Transactions.Where(x => x.Processed == false).OrderByDescending(x => x.TransactionDate).Select(x => new GetUnprocessedTransactionsDto
                 {
                     Id = x.Id,
                     TransactionAmount = $"£{Math.Round(x.TransactionAmount / 100m, 2)}",
