@@ -66,7 +66,7 @@ const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
       <div className={classes.tableBox}>
         <Table striped>
           <Table.Thead>
-            <Table.Tr>
+            <Table.Tr className={classes.tr}>
               <Table.Th>Icon</Table.Th>
               <Table.Th>Merchant</Table.Th>
               <Table.Th>Transaction Amount</Table.Th>

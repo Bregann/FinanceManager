@@ -57,7 +57,7 @@ const AddNewMonthModal = (props: AddNewMonthModalProps): JSX.Element => {
         <Input.Wrapper label="Income This Month" className={classes.inputWrapper}>
           <Input onChange={(e) => { setIncomeForMonth(Number.parseFloat(e.target.value)) }} />
         </Input.Wrapper>
-        <h4>Pot Breakdown</h4>
+        <h4 className={classes.h4}>Pot Breakdown</h4>
         <Grid>
           {potList?.map((pot) => {
             return (

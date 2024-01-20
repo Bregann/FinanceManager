@@ -86,7 +86,7 @@ const ThisMonth = (props: PageProps): JSX.Element => {
         </Grid>
       </Container>
 
-      <h2>Savings Breakdown</h2>
+      <h2 className={classes.h2}>Savings Breakdown</h2>
       <Container size='lg'>
         <Grid gutter="lg" justify="center">
           {potsStatsData.filter(x => x.isSavingsPot).map((pot) => {
@@ -105,12 +105,12 @@ const ThisMonth = (props: PageProps): JSX.Element => {
         </Grid>
       </Container>
 
-      <h2>Transactions This Month</h2>
+      <h2 className={classes.h2}>Transactions This Month</h2>
       <Container size='xl'>
         <TransactionsTable removeRow={false} rows={props.transactionData} dropdownValues={props.potDropdownOptions} />
       </Container>
 
-      <h2>Stats Breakdown</h2>
+      <h2 className={classes.h2}>Stats Breakdown</h2>
       <Container size='xl'>
         <Grid>
           <Grid.Col span={{ base: 12, md: 4 }}>

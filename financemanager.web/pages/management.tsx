@@ -225,12 +225,12 @@ const Page = (props: PageProps): JSX.Element => {
 
   return (
     <>
-      <h1>Pot/Automatic Transactions Management</h1>
+      <h1 className={classes.header}>Pot/Automatic Transactions Management</h1>
       <Container size="90%">
         <Grid>
           <Grid.Col span={{ base: 12, md: 6 }}>
             <div className={classes.box}>
-              <h2>Pots</h2>
+              <h2 className={classes.header}>Pots</h2>
               <Group justify='center'>
                 <Input.Wrapper label="Name" className={classes.inputWrapper} style={{ width: '50%' }}>
                   <Input defaultValue={addPotName} onChange={(e) => { setAddPotName(e.target.value) }} />
@@ -282,7 +282,7 @@ const Page = (props: PageProps): JSX.Element => {
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 6 }}>
             <div className={classes.box}>
-              <h2>Automatic Transactions</h2>
+              <h2 className={classes.header}>Automatic Transactions</h2>
               <Group justify='center'>
                 <Input.Wrapper label="Merchant Name" className={classes.inputWrapper} style={{ width: '50%' }}>
                   <Input value={addAutomaticTransactionMerchantName} onChange={(e) => { setAddAutomaticTransactionMerchantName(e.target.value) }}/>
