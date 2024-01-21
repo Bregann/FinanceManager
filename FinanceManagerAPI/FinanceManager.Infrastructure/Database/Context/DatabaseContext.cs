@@ -26,6 +26,16 @@ namespace FinanceManagerAPI.Database.Context
                 PotName = "Spare Money",
                 Deleted = false
             });
+
+            modelBuilder.Entity<HistoricData>().HasData(new HistoricData
+            {
+                Id = 1,
+                AmountSaved = 0,
+                AmountSpent = 0,
+                MonthEnd = DateTime.UtcNow,
+                MonthlyIncome = 0,
+                MonthStart = DateTime.UtcNow
+            });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
