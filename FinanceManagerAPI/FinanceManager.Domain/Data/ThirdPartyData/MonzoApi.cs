@@ -1,4 +1,6 @@
-﻿using FinanceManager.Domain.Dtos.ThirdParty;
+﻿using BreganUtils;
+using FinanceManager.Domain.Dtos.ThirdParty;
+using FinanceManager.Infrastructure.Database.Models;
 using FinanceManagerAPI.Database.Context;
 using FinanceManagerAPI.Database.Models;
 using Microsoft.EntityFrameworkCore;
@@ -150,6 +152,20 @@ namespace FinanceManagerAPI.Data.MonzoApi
                     transaction.Processed = true;
 
                     await context.SaveChangesAsync();
+
+                    //Send communications
+                    MessageHelper.SendTextMessage(AppConfig.MMSApiKey, AppConfig.ChatId, $"Transaction @ {transaction.MerchantName} \n Set to pot {automaticTransaction.Pot.PotName} \n Transaction amount: £{Math.Round(transaction.TransactionAmount / 100m, 2):N} \n Amount left in pot: £{Math.Round(automaticTransaction.Pot.PotAmountLeft / 100m, 2):N}");
+
+                    var emailContent = new
+                    {
+                        merchantName = transaction.MerchantName,
+                        transactionAmount = $"£{Math.Round(transaction.TransactionAmount / 100m, 2):N}",
+                        potName = automaticTransaction.Pot.PotName,
+                        potAmountLeft = $"£{Math.Round(automaticTransaction.Pot.PotAmountLeft / 100m, 2):N}"
+                    };
+
+                    MessageHelper.SendEmail(AppConfig.MMSApiKey, AppConfig.ToEmailAddress, AppConfig.ToEmailAddressName, AppConfig.FromEmailAddress, AppConfig.FromEmailAddressName, emailContent, AppConfig.UpdatedTransactionTemplateId);
+
 
                     Log.Information($"[Automatic Transactions] £{transaction.TransactionAmount} transaction for {transaction.MerchantName} successfully updated");
                 }

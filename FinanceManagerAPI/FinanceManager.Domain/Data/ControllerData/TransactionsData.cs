@@ -73,7 +73,7 @@ namespace FinanceManager.Domain.Data.ControllerData
                 pot.PotAmountSpent += transaction.TransactionAmount;
 
                 //Send communications
-                var response = MessageHelper.SendTextMessage(AppConfig.MMSApiKey, AppConfig.ChatId, $"Transaction @ {transaction.MerchantName} set to pot {pot.PotName} \n Transaction amount: £{Math.Round(transaction.TransactionAmount / 100m, 2):N} \n Amount left in pot: £{Math.Round(pot.PotAmountLeft / 100m, 2):N}");
+                MessageHelper.SendTextMessage(AppConfig.MMSApiKey, AppConfig.ChatId, $"Transaction @ {transaction.MerchantName} \n Set to pot {pot.PotName} \n Transaction amount: £{Math.Round(transaction.TransactionAmount / 100m, 2):N} \n Amount left in pot: £{Math.Round(pot.PotAmountLeft / 100m, 2):N}");
 
                 var emailContent = new
                 {
