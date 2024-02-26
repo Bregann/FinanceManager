@@ -23,9 +23,9 @@ namespace FinanceManagerAPI.Data.MonzoApi
 
             var response = await client.ExecuteAsync(request);
 
-            if (response.Content == null || response.Content == "")
+            if (response.Content == null || response.Content == "" || !response.IsSuccessStatusCode)
             {
-                Log.Warning("[Monzo Refresh] Refresh Error");
+                Log.Warning($"[Monzo Refresh] Refresh Error - response {response.StatusCode}");
                 //todo: send error msg
                 return;
             }

@@ -1,6 +1,7 @@
 ﻿using BreganUtils;
 using FinanceManager.Domain.Dtos.Controllers.Transactions.Requests;
 using FinanceManager.Domain.Dtos.Controllers.Transactions.Responses;
+using FinanceManagerAPI;
 using FinanceManagerAPI.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -70,6 +71,19 @@ namespace FinanceManager.Domain.Data.ControllerData
                 transaction.Processed = true;
                 pot.PotAmountLeft -= transaction.TransactionAmount;
                 pot.PotAmountSpent += transaction.TransactionAmount;
+
+                //Send communications
+                var response = MessageHelper.SendTextMessage(AppConfig.MMSApiKey, AppConfig.ChatId, $"Transaction @ {transaction.MerchantName} set to pot {pot.PotName} \n Transaction amount: £{Math.Round(transaction.TransactionAmount / 100m, 2):N} \n Amount left in pot: £{Math.Round(pot.PotAmountLeft / 100m, 2):N}");
+
+                var emailContent = new
+                {
+                    merchantName = transaction.MerchantName,
+                    transactionAmount = $"£{Math.Round(transaction.TransactionAmount / 100m, 2):N}",
+                    potName = pot.PotName,
+                    potAmountLeft = $"£{Math.Round(pot.PotAmountLeft / 100m, 2):N}"
+                };
+
+                MessageHelper.SendEmail(AppConfig.MMSApiKey, AppConfig.ToEmailAddress, AppConfig.ToEmailAddressName, AppConfig.FromEmailAddress, AppConfig.FromEmailAddressName, emailContent, AppConfig.UpdatedTransactionTemplateId);
 
                 await context.SaveChangesAsync();
                 Log.Information("[Transactions] Pot and transaction updated");

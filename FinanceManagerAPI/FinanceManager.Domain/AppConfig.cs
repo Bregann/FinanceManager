@@ -12,6 +12,14 @@ namespace FinanceManagerAPI
         public static string MonzoAccessToken { get; private set; } = "";
         public static string HFUsername { get; private set; } = "";
         public static string HFPassword { get; private set; } = "";
+        public static string ToEmailAddress { get; private set; } = "";
+        public static string ToEmailAddressName { get; private set; } = "";
+        public static string FromEmailAddress { get; private set; } = "";
+        public static string FromEmailAddressName { get; private set; } = "";
+        public static string UnprocessedTransactionsTemplateId { get; private set; } = "";
+        public static string UpdatedTransactionTemplateId { get; private set; } = "";
+        public static long ChatId { get; private set; }
+        public static string MMSApiKey { get; private set; } = "";
 
         public static void LoadConfig()
         {
@@ -26,6 +34,14 @@ namespace FinanceManagerAPI
                 MonzoAccessToken = config.MonzoAccessToken;
                 HFUsername = config.HFUsername;
                 HFPassword = config.HFPassword;
+                ToEmailAddress = config.ToEmailAddress;
+                ToEmailAddressName = config.ToEmailAddressName;
+                FromEmailAddress = config.FromEmailAddress;
+                FromEmailAddressName = config.FromEmailAddressName;
+                UnprocessedTransactionsTemplateId = config.UnprocessedTransactionsTemplateId;
+                UpdatedTransactionTemplateId = config.UpdatedTransactionTemplateId;
+                ChatId = config.ChatId;
+                MMSApiKey = config.MMSApiKey;
 
                 Log.Information("Config loaded");
             }

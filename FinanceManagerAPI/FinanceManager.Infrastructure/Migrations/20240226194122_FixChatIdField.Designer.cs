@@ -3,6 +3,7 @@ using System;
 using FinanceManagerAPI.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceManager.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240226194122_FixChatIdField")]
+    partial class FixChatIdField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,8 +83,8 @@ namespace FinanceManager.Infrastructure.Migrations
                             Id = 1,
                             AmountSaved = 0m,
                             AmountSpent = 0m,
-                            MonthEnd = new DateTime(2024, 2, 26, 20, 47, 41, 918, DateTimeKind.Utc).AddTicks(3),
-                            MonthStart = new DateTime(2024, 2, 26, 20, 47, 41, 918, DateTimeKind.Utc).AddTicks(4),
+                            MonthEnd = new DateTime(2024, 2, 26, 19, 41, 22, 433, DateTimeKind.Utc).AddTicks(2250),
+                            MonthStart = new DateTime(2024, 2, 26, 19, 41, 22, 433, DateTimeKind.Utc).AddTicks(2251),
                             MonthlyIncome = 0m
                         });
                 });
@@ -138,6 +141,10 @@ namespace FinanceManager.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ConfigName"));
 
+                    b.Property<string>("ApiKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<long>("ChatId")
                         .HasColumnType("bigint");
 
@@ -190,10 +197,6 @@ namespace FinanceManager.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("UnprocessedTransactionsTemplateId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UpdatedTransactionTemplateId")
                         .IsRequired()
                         .HasColumnType("text");
 

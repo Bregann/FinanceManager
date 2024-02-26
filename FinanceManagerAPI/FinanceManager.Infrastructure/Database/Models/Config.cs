@@ -14,5 +14,13 @@ namespace FinanceManagerAPI.Database.Models
         public required string MonzoAccessToken { get; set; }
         public required string HFUsername { get; set; }
         public required string HFPassword { get; set; }
+        public required string ToEmailAddress { get; set; }
+        public required string ToEmailAddressName { get; set; }
+        public required string FromEmailAddress { get; set; }
+        public required string FromEmailAddressName { get; set; }
+        public required string UpdatedTransactionTemplateId { get; set; }
+        public required string UnprocessedTransactionsTemplateId { get; set; }
+        public required long ChatId { get; set; }
+        public required string MMSApiKey { get; set; }
     }
 }
