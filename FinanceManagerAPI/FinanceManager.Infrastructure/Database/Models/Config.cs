@@ -19,7 +19,7 @@ namespace FinanceManagerAPI.Database.Models
         public required string FromEmailAddress { get; set; }
         public required string FromEmailAddressName { get; set; }
         public required string UpdatedTransactionTemplateId { get; set; }
-        public required string UnprocessedTransactionsTemplateId { get; set; }
+        public required string DailyStatsTemplateId { get; set; }
         public required long ChatId { get; set; }
         public required string MMSApiKey { get; set; }
     }

@@ -16,7 +16,7 @@ namespace FinanceManagerAPI
         public static string ToEmailAddressName { get; private set; } = "";
         public static string FromEmailAddress { get; private set; } = "";
         public static string FromEmailAddressName { get; private set; } = "";
-        public static string UnprocessedTransactionsTemplateId { get; private set; } = "";
+        public static string DailyStatsTemplateId { get; private set; } = "";
         public static string UpdatedTransactionTemplateId { get; private set; } = "";
         public static long ChatId { get; private set; }
         public static string MMSApiKey { get; private set; } = "";
@@ -38,7 +38,7 @@ namespace FinanceManagerAPI
                 ToEmailAddressName = config.ToEmailAddressName;
                 FromEmailAddress = config.FromEmailAddress;
                 FromEmailAddressName = config.FromEmailAddressName;
-                UnprocessedTransactionsTemplateId = config.UnprocessedTransactionsTemplateId;
+                DailyStatsTemplateId = config.DailyStatsTemplateId;
                 UpdatedTransactionTemplateId = config.UpdatedTransactionTemplateId;
                 ChatId = config.ChatId;
                 MMSApiKey = config.MMSApiKey;

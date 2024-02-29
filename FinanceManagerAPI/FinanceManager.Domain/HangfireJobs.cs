@@ -1,4 +1,5 @@
-﻿using FinanceManagerAPI.Data.MonzoApi;
+﻿using FinanceManager.Domain.Data.Stats;
+using FinanceManagerAPI.Data.MonzoApi;
 using Hangfire;
 using Serilog;
 
@@ -10,6 +11,9 @@ namespace FinanceManager.Domain
         {
             RecurringJob.AddOrUpdate("RefreshApi", () => RefreshMonzoApi(), "45 * * * *");
             RecurringJob.AddOrUpdate("UpdateMonzoTransactions", () => UpdateMonzoTransactions(), "0 * * * *");
+            RecurringJob.AddOrUpdate("SendDailyStatsEmail", () => SendDailyStatsEmail(), "0 21 * * *");
+
+            // TODO: job for daily email with stats on the month + unprocessed transactions
 
             Log.Information("[Job Scheduler] Hangfire Jobs Setup");
         }
@@ -23,6 +27,11 @@ namespace FinanceManager.Domain
         {
             await MonzoApi.GetTransactionsAndAddToDatabase();
             await MonzoApi.UpdateAutomaticTransactions();
+        }
+
+        public static async Task SendDailyStatsEmail()
+        {
+            await Stats.GetDailyStatsAndSendEmail();
         }
     }
 }
