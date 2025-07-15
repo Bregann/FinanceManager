@@ -7,7 +7,7 @@ interface YesNoModalProps {
   onYesClicked: () => void
 }
 
-const YesNoModal = (props: YesNoModalProps): JSX.Element => {
+const YesNoModal = (props: YesNoModalProps) => {
   return (
     <>
       <Modal opened={props.displayModal} onClose={() => { props.onHideModal(false) }} closeOnClickOutside={false}>

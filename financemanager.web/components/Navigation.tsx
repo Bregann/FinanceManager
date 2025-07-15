@@ -7,7 +7,7 @@ import { IconCalendarPlus } from '@tabler/icons-react'
 import { useState } from 'react'
 import AddNewMonthModal from './AddNewMonthModal'
 
-const Navigation = (): JSX.Element => {
+const Navigation = () => {
   const [opened, { toggle }] = useDisclosure()
   const router = useRouter()
   const [addMonthDisplayed, setAddMonthDisplayed] = useState(false)

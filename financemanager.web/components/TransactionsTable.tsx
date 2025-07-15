@@ -22,7 +22,7 @@ interface TransactionsTableProps {
   removeRow: boolean
 }
 
-const TransactionsTable = (props: TransactionsTableProps): JSX.Element => {
+const TransactionsTable = (props: TransactionsTableProps) => {
   const [tableRows, setTableRows] = useState<TransactionTableData[]>(props.rows)
   const [showYesNoModal, setShowYesNoModal] = useState(false)
   const [clickedRow, setClickedRow] = useState<TransactionTableData | null>(null)

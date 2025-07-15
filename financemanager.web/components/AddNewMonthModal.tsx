@@ -11,7 +11,7 @@ export interface AddNewMonthModalProps {
   hideModal: () => void
 }
 
-const AddNewMonthModal = (props: AddNewMonthModalProps): JSX.Element => {
+const AddNewMonthModal = (props: AddNewMonthModalProps) => {
   const [potList, setPotList] = useState<PotList[] | undefined>(undefined)
   const [totalPotAmount, setTotalPotAmount] = useState(0)
   const [incomeForMonth, setIncomeForMonth] = useState(0)

@@ -24,7 +24,7 @@ export interface AutomaticTransactionList {
   potId: string
 }
 
-const Page = (props: PageProps): JSX.Element => {
+const Page = (props: PageProps) => {
   const [potData, setPotData] = useState(props.potData)
   const [addPotName, setAddPotName] = useState('')
   const [addPotAmount, setAddPotAmount] = useState(0)

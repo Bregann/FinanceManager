@@ -17,7 +17,7 @@ interface HomeTopStats {
   totalSavings: string
 }
 
-export default function Home (props: PageProps): JSX.Element {
+export default function Home (props: PageProps) {
   return (
     <>
       <Container size='lg'>

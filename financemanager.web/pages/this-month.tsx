@@ -24,7 +24,7 @@ interface PotsStats {
   amountSpent: string
 }
 
-const ThisMonth = (props: PageProps): JSX.Element => {
+const ThisMonth = (props: PageProps) => {
   const [openEditSavingsModal, setOpenEditSavingsModal] = useState(false)
   const [currentEditedSavingsPot, setCurrentEditedSavingsPot] = useState<PotsStats | undefined>(undefined)
   const [potsStatsData, setPotsStatsData] = useState(props.potsStatsData)
