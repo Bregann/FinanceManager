@@ -22,8 +22,12 @@ builder.Services.AddCors(options =>
         });
 });
 
-Log.Logger = new LoggerConfiguration().WriteTo.Async(x => x.File("Logs/log.log", retainedFileCountLimit: 7, rollingInterval: RollingInterval.Day)).WriteTo.Console().CreateLogger();
-Log.Information("Logger Setup");
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Async(x => x.File("/app/Logs/log.log", retainedFileCountLimit: 7, rollingInterval: RollingInterval.Day))
+    .WriteTo.Console()
+    .Enrich.WithProperty("Application", "FinanceManager-Api" + (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "-Test" : ""))
+    .WriteTo.Seq("http://192.168.1.20:5341")
+    .CreateLogger(); Log.Information("Logger Setup");
 
 AppConfig.LoadConfig();
 HangfireJobs.SetupHangfireJobs();
@@ -42,10 +46,6 @@ builder.Services.AddHangfire(configuration => configuration
         );
 
 builder.Services.AddHangfireServer(options => options.SchedulePollingInterval = TimeSpan.FromSeconds(10));
-
-#if RELEASE
-builder.WebHost.UseUrls("http://localhost:5003");
-#endif
 
 var app = builder.Build();
 

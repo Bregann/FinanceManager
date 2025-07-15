@@ -13,8 +13,6 @@ namespace FinanceManager.Domain
             RecurringJob.AddOrUpdate("UpdateMonzoTransactions", () => UpdateMonzoTransactions(), "0 * * * *");
             RecurringJob.AddOrUpdate("SendDailyStatsEmail", () => SendDailyStatsEmail(), "0 21 * * *");
 
-            // TODO: job for daily email with stats on the month + unprocessed transactions
-
             Log.Information("[Job Scheduler] Hangfire Jobs Setup");
         }
 

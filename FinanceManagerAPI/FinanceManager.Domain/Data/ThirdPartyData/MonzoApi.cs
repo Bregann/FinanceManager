@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators.OAuth2;
 using Serilog;
+using System.Globalization;
 
 namespace FinanceManagerAPI.Data.MonzoApi
 {
@@ -148,20 +149,23 @@ namespace FinanceManagerAPI.Data.MonzoApi
 
                     //Update the transaction data
                     automaticTransaction.Pot.PotAmountLeft -= transaction.TransactionAmount;
+                    automaticTransaction.Pot.PotAmountSpent += transaction.TransactionAmount;
                     transaction.Pot = automaticTransaction.Pot;
                     transaction.Processed = true;
 
                     await context.SaveChangesAsync();
 
+                    var culture = CultureInfo.GetCultureInfo("en-GB");
+
                     //Send communications
-                    MessageHelper.SendTextMessage(AppConfig.MMSApiKey, AppConfig.ChatId, $"Transaction @ {transaction.MerchantName} \n Set to pot {automaticTransaction.Pot.PotName} \n Transaction amount: £{Math.Round(transaction.TransactionAmount / 100m, 2):N} \n Amount left in pot: £{Math.Round(automaticTransaction.Pot.PotAmountLeft / 100m, 2):N}");
+                    MessageHelper.SendTextMessage(AppConfig.MMSApiKey, AppConfig.ChatId, $"Transaction @ {transaction.MerchantName} \n Set to pot {automaticTransaction.Pot.PotName} \n Transaction amount: £{Math.Round(transaction.TransactionAmount / 100m, 2).ToString("N", culture)} \n Amount left in pot: £{Math.Round(automaticTransaction.Pot.PotAmountLeft / 100m, 2).ToString("N", culture)}");
 
                     var emailContent = new
                     {
                         merchantName = transaction.MerchantName,
-                        transactionAmount = $"£{Math.Round(transaction.TransactionAmount / 100m, 2):N}",
+                        transactionAmount = $"£{Math.Round(transaction.TransactionAmount / 100m, 2).ToString("N", culture)}",
                         potName = automaticTransaction.Pot.PotName,
-                        potAmountLeft = $"£{Math.Round(automaticTransaction.Pot.PotAmountLeft / 100m, 2):N}"
+                        potAmountLeft = $"£{Math.Round(automaticTransaction.Pot.PotAmountLeft / 100m, 2).ToString("N", culture)}"
                     };
 
                     MessageHelper.SendEmail(AppConfig.MMSApiKey, AppConfig.ToEmailAddress, AppConfig.ToEmailAddressName, AppConfig.FromEmailAddress, AppConfig.FromEmailAddressName, emailContent, AppConfig.UpdatedTransactionTemplateId);

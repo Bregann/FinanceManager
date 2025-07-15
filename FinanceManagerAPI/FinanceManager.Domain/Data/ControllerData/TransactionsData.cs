@@ -5,6 +5,8 @@ using FinanceManagerAPI;
 using FinanceManagerAPI.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace FinanceManager.Domain.Data.ControllerData
 {
@@ -72,15 +74,17 @@ namespace FinanceManager.Domain.Data.ControllerData
                 pot.PotAmountLeft -= transaction.TransactionAmount;
                 pot.PotAmountSpent += transaction.TransactionAmount;
 
+                var culture = CultureInfo.GetCultureInfo("en-GB");
+
                 //Send communications
-                MessageHelper.SendTextMessage(AppConfig.MMSApiKey, AppConfig.ChatId, $"Transaction @ {transaction.MerchantName} \n Set to pot {pot.PotName} \n Transaction amount: £{Math.Round(transaction.TransactionAmount / 100m, 2):N} \n Amount left in pot: £{Math.Round(pot.PotAmountLeft / 100m, 2):N}");
+                MessageHelper.SendTextMessage(AppConfig.MMSApiKey, AppConfig.ChatId, $"Transaction @ {transaction.MerchantName} \n Set to pot {pot.PotName} \n Transaction amount: £{Math.Round(transaction.TransactionAmount / 100m, 2).ToString("N", culture)} \n Amount left in pot: £{Math.Round(pot.PotAmountLeft / 100m, 2).ToString("N", culture)}");
 
                 var emailContent = new
                 {
                     merchantName = transaction.MerchantName,
-                    transactionAmount = $"£{Math.Round(transaction.TransactionAmount / 100m, 2):N}",
+                    transactionAmount = $"£{Math.Round(transaction.TransactionAmount / 100m, 2).ToString("N", culture)}",
                     potName = pot.PotName,
-                    potAmountLeft = $"£{Math.Round(pot.PotAmountLeft / 100m, 2):N}"
+                    potAmountLeft = $"£{Math.Round(pot.PotAmountLeft / 100m, 2).ToString("N", culture)}"
                 };
 
                 MessageHelper.SendEmail(AppConfig.MMSApiKey, AppConfig.ToEmailAddress, AppConfig.ToEmailAddressName, AppConfig.FromEmailAddress, AppConfig.FromEmailAddressName, emailContent, AppConfig.UpdatedTransactionTemplateId);

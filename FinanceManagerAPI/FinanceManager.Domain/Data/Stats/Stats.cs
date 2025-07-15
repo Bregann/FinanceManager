@@ -16,7 +16,7 @@ namespace FinanceManager.Domain.Data.Stats
                 {
                     UnprocessedTransactionsCount = await context.Transactions.Where(x => x.Processed == false).CountAsync(),
                     Transactions = await context.Transactions
-                                    .Where(x => x.TransactionDate.Date == DateTime.Now.Date)
+                                    .Where(x => x.TransactionDate.Date == DateTime.UtcNow.Date)
                                     .Select(x => new Transaction
                                     {
                                         MerchantName = x.MerchantName,

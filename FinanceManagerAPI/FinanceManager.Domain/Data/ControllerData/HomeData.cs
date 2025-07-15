@@ -1,6 +1,7 @@
 ﻿using FinanceManager.Domain.Dtos.Controllers.Home;
 using FinanceManagerAPI.Database.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace FinanceManager.Domain.Data.ControllerData
 {
@@ -15,12 +16,14 @@ namespace FinanceManager.Domain.Data.ControllerData
                 var moneySpent = await context.Pots.Where(x => x.Deleted == false && x.IsSavingsPot == false).Select(x => x.PotAmountSpent).SumAsync();
                 var totalSavings = await context.Pots.Where(x => x.Deleted == false && x.IsSavingsPot == true).Select(x => x.PotAmount).SumAsync();
 
+                var culture = CultureInfo.GetCultureInfo("en-GB");
+
                 return new GetHomeStatsDto
                 {
-                    MoneyIn = $"£{Math.Round((monthlyData.MonthlyIncome / 100m), 2):N}",
-                    MoneyLeft = $"£{Math.Round((moneyLeft / 100m), 2):N}",
-                    MoneySpent = $"£{Math.Round((moneySpent / 100m), 2):N}",
-                    TotalSavings = $"£{Math.Round((totalSavings / 100m), 2):N}"
+                    MoneyIn = $"£{Math.Round((monthlyData.MonthlyIncome / 100m), 2).ToString("N", culture)}",
+                    MoneyLeft = $"£{Math.Round((moneyLeft / 100m), 2).ToString("N", culture)}",
+                    MoneySpent = $"£{Math.Round((moneySpent / 100m), 2).ToString("N", culture)}",
+                    TotalSavings = $"£{Math.Round((totalSavings / 100m), 2).ToString("N", culture)}"
                 };
             }
         }
