@@ -36,8 +36,4 @@
     <ProjectReference Include="..\FinanceManager.Domain\FinanceManager.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>

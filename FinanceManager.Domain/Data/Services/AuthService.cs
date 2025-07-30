@@ -15,18 +15,17 @@ using System.Text;
 
 namespace FinanceManager.Domain.Data.Services
 {
-    public class AuthService(AppDbContext dbContext) : IAuthService
+    public class AuthService(AppDbContext context) : IAuthService
     {
-        private readonly AppDbContext _context = dbContext;
         private readonly PasswordHasher<User> _passwordHasher = new();
 
         public async Task RegisterUser(RegisterUserRequest request)
         {
             Log.Information($"Registering user {request.Username}");
 
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
+            var existingUser = await context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
 
-            if (_context.Users.Any(x => x.Username == request.Username || x.Email == request.Email))
+            if (context.Users.Any(x => x.Username == request.Username || x.Email == request.Email))
             {
                 Log.Information($"User already exists {request.Username}");
                 throw new DuplicateNameException("User already exists");
@@ -40,8 +39,8 @@ namespace FinanceManager.Domain.Data.Services
                 PasswordHash = _passwordHasher.HashPassword(new User(), request.Password.Trim())
             };
 
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
+            context.Users.Add(newUser);
+            await context.SaveChangesAsync();
 
             Log.Information($"User registered {request.Username}");
         }
@@ -50,7 +49,7 @@ namespace FinanceManager.Domain.Data.Services
         {
             Log.Information($"Logging in user {request.Username}");
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username.ToLower().Trim());
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Username == request.Username.ToLower().Trim());
 
             if (user == null)
             {
@@ -81,7 +80,7 @@ namespace FinanceManager.Domain.Data.Services
         public async Task<LoginUserResponse> RefreshToken(string userRefreshToken)
         {
             Log.Information($"Refreshing token {userRefreshToken}");
-            var refreshToken = await _context.UserRefreshTokens.FirstOrDefaultAsync(t => t.Token == userRefreshToken);
+            var refreshToken = await context.UserRefreshTokens.FirstOrDefaultAsync(t => t.Token == userRefreshToken);
 
             if (refreshToken == null)
             {
@@ -95,7 +94,7 @@ namespace FinanceManager.Domain.Data.Services
                 throw new UnauthorizedAccessException("Refresh token expired");
             }
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == refreshToken.UserId);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == refreshToken.UserId);
 
             if (user == null)
             {
@@ -109,7 +108,7 @@ namespace FinanceManager.Domain.Data.Services
             await SaveRefreshToken(newRefreshToken, user.Id);
 
             refreshToken.IsRevoked = true;
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             Log.Information($"Token refreshed for user {refreshToken.UserId}");
 
@@ -155,8 +154,8 @@ namespace FinanceManager.Domain.Data.Services
                 ExpiresAt = DateTime.UtcNow.AddDays(7)
             };
 
-            _context.UserRefreshTokens.Add(refreshToken);
-            await _context.SaveChangesAsync();
+            context.UserRefreshTokens.Add(refreshToken);
+            await context.SaveChangesAsync();
         }
     }
 }
